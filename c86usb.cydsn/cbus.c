@@ -45,7 +45,7 @@ void cbus_reset(void)
 	DigitalReset_Write(1);
 	CyDelayUs(1000);
 	DigitalReset_Write(0);
-	CyDelay(500);
+	CyDelay(1000);
 }
 
 

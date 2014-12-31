@@ -25,8 +25,8 @@ typedef enum {
 	SOUND_86_028X  = 0x05,
 	SOUND_9821NF   = 0x06, // RESERVE
 	SOUND_9821X    = 0x07, // RESERVE
-	SOUND_118      = 0x08, // RESERVE
-	SOUND_9821C    = 0x08, // RESERVE
+	SOUND_118      = 0x08,
+	SOUND_9821C    = 0x08,
 	SOUND_NONE     = 0xff
 } SOUND_ID;
 
@@ -193,7 +193,7 @@ static uint32_t auto_detect(int idx)
 	chip_write(idx, 0x188, 0x18a, 0x02, 0x5a );  // CH.B FineTune, pattern=0x5a
 	chip_write(idx, 0x188, 0x18a, 0x04, 0x26 );  // CH.C FineTune, pattern=0x26
 
-	if (0xa5 != chip_read(idx, 0x188, 0x18a, 0x00)) // CH.A FineTune
+	if (0xa5 != chip_read(idx, 0x0188, 0x018a, 0x00)) // CH.A FineTune
 		return type;
 	if (0x5a != chip_read(idx, 0x188, 0x18a, 0x02)) // CH.B FineTune
 		return type;
@@ -202,17 +202,22 @@ static uint32_t auto_detect(int idx)
 
 	type = CBUS_BOARD_26;
 
-	// is 86?? -----------------------
+	// is YM2608 / YMF288?? -----------------------
 	// SpeakBoardとか0xa460非サポートな奴用
+    // NOTE: SpeakBoardはアドレスを12bitしかデコードしていないようだ。
 
 	// 0xff OPNA device-id
-	if (0x01!=chip_read(idx, 0x188, 0x18a, 0xff))
-		return type;
-
+	uint16_t chiptype = chip_read(idx, 0x188, 0x18a, 0xff);
+	
+	if (0x01==chiptype) // YM2608
+		return CBUS_BOARD_ASB01;
+	else if (0x02==chiptype) // YMF288
+		return CBUS_BOARD_SXM_F;
+	
 	// ここでADPCM-RAM判定したいが、
 	// ボード情報設定前なので boards が使えない。
-
-	return type;
+	
+	return CBUS_BOARD_26;
 }
 
 // ------------------------------------------
@@ -237,10 +242,16 @@ void cbus_board_setup(void)
 			uint16_t sid = cbus_read(i, 0xA460);
 			switch((sid&0xff)>>4){
 			case SOUND_86_018X:
-				type = CBUS_BOARD_86;
+				type = CBUS_BOARD_86_0188H;
+				break;
+			case SOUND_86_028X:
+				type = CBUS_BOARD_86_0288H;
 				break;
 			case SOUND_73_018X:
-				type = CBUS_BOARD_73;
+				type = CBUS_BOARD_73_0288H;
+				break;
+			case SOUND_73_028X:
+				type = CBUS_BOARD_73_0288H;
 				break;
 			case SOUND_118:
 				type = CBUS_BOARD_118;
@@ -258,10 +269,14 @@ void cbus_board_setup(void)
 		// YM2203 only
 		case CBUS_BOARD_26:
 		case CBUS_BOARD_MULTIMEDIA_ORCHESTRA:
-		case CBUS_BOARD_LITTLE_ORCHESTRA:
-		case CBUS_BOARD_LITTLE_ORCHESTRA_L:
-		case CBUS_BOARD_LITTLE_ORCHESTRA_RS:
-		case CBUS_BOARD_LITTLE_ORCHESTRA_LS:
+		case CBUS_BOARD_LITTLE_ORCHESTRA_0188H:
+		case CBUS_BOARD_LITTLE_ORCHESTRA_0088H:
+		case CBUS_BOARD_LITTLE_ORCHESTRA_L_0188H:
+		case CBUS_BOARD_LITTLE_ORCHESTRA_L_0088H:
+		case CBUS_BOARD_LITTLE_ORCHESTRA_RS_0188H:
+		case CBUS_BOARD_LITTLE_ORCHESTRA_RS_0088H:
+		case CBUS_BOARD_LITTLE_ORCHESTRA_LS_0188H:
+		case CBUS_BOARD_LITTLE_ORCHESTRA_LS_0088H:
 		case CBUS_BOARD_LITTLE_ORCHESTRA_SS:
 		case CBUS_BOARD_LITTLE_ORCHESTRA_MATE:
 		case CBUS_BOARD_LITTLE_ORCHESTRA_FELLOW:
@@ -271,10 +286,18 @@ void cbus_board_setup(void)
 			board->nchips = 1;
 			board->chip[0].slot = i;
 			board->chip[0].chiptype = CHIP_YM2203;
-			board->chip[0].areg_addr[0] = 0x188;
-			board->chip[0].areg_addr[1] = 0x188;
-			board->chip[0].dreg_addr[0] = 0x18a;
-			board->chip[0].dreg_addr[1] = 0x18a;
+			if(type==CBUS_BOARD_LITTLE_ORCHESTRA_0088H || type==CBUS_BOARD_LITTLE_ORCHESTRA_L_0088H ||
+			   type==CBUS_BOARD_LITTLE_ORCHESTRA_RS_0088H || type==CBUS_BOARD_LITTLE_ORCHESTRA_LS_0088H ){
+				board->chip[0].areg_addr[0] = 0x088;
+				board->chip[0].areg_addr[1] = 0x088;
+				board->chip[0].dreg_addr[0] = 0x08a;
+				board->chip[0].dreg_addr[1] = 0x08a;
+			}else{
+				board->chip[0].areg_addr[0] = 0x188;
+				board->chip[0].areg_addr[1] = 0x188;
+				board->chip[0].dreg_addr[0] = 0x18a;
+				board->chip[0].dreg_addr[1] = 0x18a;
+			}
 			// FIXME: たぶんウエイト違うけど、資料が無い。
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2203_MC4[0];
@@ -320,15 +343,22 @@ void cbus_board_setup(void)
 		// ---------------------------------
 		// YM2203 + Y8950
 		case CBUS_BOARD_SOUND_ORCHESTRA_V:
-		case CBUS_BOARD_SOUND_ORCHESTRA_VS:
-		case CBUS_BOARD_SOUND_ORCHESTRA_LS:
+		case CBUS_BOARD_SOUND_ORCHESTRA_VS_0188H:
+		case CBUS_BOARD_SOUND_ORCHESTRA_VS_0088H:
+		case CBUS_BOARD_SOUND_ORCHESTRA_LS_0188H:
+		case CBUS_BOARD_SOUND_ORCHESTRA_LS_0088H:
 		case CBUS_BOARD_SOUND_ORCHESTRA_MATE:
 			board->nchips = 1;
 			board->control_write = 0;
 			board->chip[0].slot = i;
 			board->chip[0].chiptype = CHIP_YM2203;
-			board->chip[0].areg_addr[0] = 0x188;
-			board->chip[0].dreg_addr[0] = 0x18a;
+			if( type==CBUS_BOARD_SOUND_ORCHESTRA_VS_0088H || type==CBUS_BOARD_SOUND_ORCHESTRA_LS_0088H ){
+				board->chip[0].areg_addr[0] = 0x088;
+				board->chip[0].dreg_addr[0] = 0x08a;
+			}else{
+				board->chip[0].areg_addr[0] = 0x188;
+				board->chip[0].dreg_addr[0] = 0x18a;
+			}
 			// FIXME: たぶんウエイト違うけど、資料が無い。
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2203_MC4[0];
@@ -341,8 +371,13 @@ void cbus_board_setup(void)
 			board->nchips = 2;
 			board->chip[1].slot = i;
 			board->chip[1].chiptype = CHIP_Y8950ADPCM;
-			board->chip[1].areg_addr[0] = 0x18c;
-			board->chip[1].dreg_addr[0] = 0x18e;
+			if( type==CBUS_BOARD_SOUND_ORCHESTRA_VS_0088H || type==CBUS_BOARD_SOUND_ORCHESTRA_LS_0088H ){
+				board->chip[1].areg_addr[0] = 0x08c;
+				board->chip[1].dreg_addr[0] = 0x08e;
+			}else{
+				board->chip[1].areg_addr[0] = 0x18c;
+				board->chip[1].dreg_addr[0] = 0x18e;
+			}
 			// FIXME: ウエイト違う.
 			board->chip[1].waitidx = &waitidx_2608[0];
 			board->chip[1].waitdef = &waitdef_2203_MC4[0];
@@ -352,14 +387,22 @@ void cbus_board_setup(void)
 			
 		// ---------------------------------
 		// YM2608 0xA460有り
-		case CBUS_BOARD_73:
+		case CBUS_BOARD_73_0188H:
+		case CBUS_BOARD_73_0288H:
 			board->nchips = 1;
 			board->chip[0].slot = i;
 			board->chip[0].chiptype = CHIP_YM2608NOADPCM;
-			board->chip[0].areg_addr[0] = 0x188;
-			board->chip[0].areg_addr[1] = 0x18c;
-			board->chip[0].dreg_addr[0] = 0x18a;
-			board->chip[0].dreg_addr[1] = 0x18e;
+			if (type == CBUS_BOARD_73_0288H){
+				board->chip[0].areg_addr[0] = 0x288;
+				board->chip[0].areg_addr[1] = 0x28c;
+				board->chip[0].dreg_addr[0] = 0x28a;
+				board->chip[0].dreg_addr[1] = 0x28e;
+			}else{
+				board->chip[0].areg_addr[0] = 0x188;
+				board->chip[0].areg_addr[1] = 0x18c;
+				board->chip[0].dreg_addr[0] = 0x18a;
+				board->chip[0].dreg_addr[1] = 0x18e;
+			}
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2608[0];
 			board->chip[0].writefunc = ym2608_write;
@@ -379,15 +422,43 @@ void cbus_board_setup(void)
 
 		// ---------------------------------
 		// YM2608 0xA460無し
-		case CBUS_BOARD_ASB01:
+		case CBUS_BOARD_ASB01_0188H:
+		case CBUS_BOARD_ASB01_0088H:
+		case CBUS_BOARD_ASB01_0288H:
+		case CBUS_BOARD_ASB01_0388H:
 		case CBUS_BOARD_SOUNDPLAYER98:
 			board->nchips = 1;
 			board->chip[0].slot = i;
 			board->chip[0].chiptype = CHIP_YM2608NOADPCM;
-			board->chip[0].areg_addr[0] = 0x188;
-			board->chip[0].areg_addr[1] = 0x18c;
-			board->chip[0].dreg_addr[0] = 0x18a;
-			board->chip[0].dreg_addr[1] = 0x18e;
+
+			switch(type){
+			case CBUS_BOARD_ASB01_0188H:
+			case CBUS_BOARD_SOUNDPLAYER98:
+				board->chip[0].areg_addr[0] = 0x188;
+				board->chip[0].areg_addr[1] = 0x18c;
+				board->chip[0].dreg_addr[0] = 0x18a;
+				board->chip[0].dreg_addr[1] = 0x18e;
+				break;
+			case CBUS_BOARD_ASB01_0088H:
+				board->chip[0].areg_addr[0] = 0x088;
+				board->chip[0].areg_addr[1] = 0x08c;
+				board->chip[0].dreg_addr[0] = 0x08a;
+				board->chip[0].dreg_addr[1] = 0x08e;
+				break;
+			case CBUS_BOARD_ASB01_0288H:
+				board->chip[0].areg_addr[0] = 0x288;
+				board->chip[0].areg_addr[1] = 0x28c;
+				board->chip[0].dreg_addr[0] = 0x28a;
+				board->chip[0].dreg_addr[1] = 0x28e;
+				break;
+			case CBUS_BOARD_ASB01_0388H:
+				board->chip[0].areg_addr[0] = 0x388;
+				board->chip[0].areg_addr[1] = 0x38c;
+				board->chip[0].dreg_addr[0] = 0x38a;
+				board->chip[0].dreg_addr[1] = 0x38e;
+				break;
+			}
+			
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2608[0];
 			board->chip[0].writefunc = ym2608_write;
@@ -463,18 +534,31 @@ void cbus_board_setup(void)
 
 		// ---------------------------------
 		// YM2608 0xA460有り
-		case CBUS_BOARD_86:
-		case CBUS_BOARD_WAVEMASTER:
-		case CBUS_BOARD_WAVESMIT:
-		case CBUS_BOARD_WAVESTAR:
+		case CBUS_BOARD_86_0188H:
+		case CBUS_BOARD_86_0288H:
+		case CBUS_BOARD_WAVEMASTER_0188H:
+		case CBUS_BOARD_WAVEMASTER_0288H:
+		case CBUS_BOARD_WAVESMIT_0188H:
+		case CBUS_BOARD_WAVESMIT_0288H:
+		case CBUS_BOARD_WAVESTAR_0188H:
+		case CBUS_BOARD_WAVESTAR_0288H:
 			board->nchips = 1;
 			board->control_write = board86_control;
 			board->chip[0].slot = i;
 			board->chip[0].chiptype = CHIP_YM2608NOADPCM;
-			board->chip[0].areg_addr[0] = 0x188;
-			board->chip[0].areg_addr[1] = 0x18c;
-			board->chip[0].dreg_addr[0] = 0x18a;
-			board->chip[0].dreg_addr[1] = 0x18e;
+			
+			if (type==CBUS_BOARD_86_0288H || type==CBUS_BOARD_WAVEMASTER_0288H ||
+				type==CBUS_BOARD_WAVESMIT_0288H || type==CBUS_BOARD_WAVESTAR_0288H){
+				board->chip[0].areg_addr[0] = 0x288;
+				board->chip[0].areg_addr[1] = 0x28c;
+				board->chip[0].dreg_addr[0] = 0x28a;
+				board->chip[0].dreg_addr[1] = 0x28e;
+			}else{
+				board->chip[0].areg_addr[0] = 0x188;
+				board->chip[0].areg_addr[1] = 0x18c;
+				board->chip[0].dreg_addr[0] = 0x18a;
+				board->chip[0].dreg_addr[1] = 0x18e;
+			}
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2608[0];
 			board->chip[0].writefunc = ym2608_write;

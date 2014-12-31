@@ -89,7 +89,7 @@ typedef struct {
 
 BOARD_INFO board_info;
 
-uint32_t fwversion = 0x1;
+uint32_t fwversion = 0x2;
 
 volatile uint8_t usbReq_reset = 0;
 volatile uint8_t usbReq_control = 0;

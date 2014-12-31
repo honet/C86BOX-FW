@@ -122,36 +122,36 @@ void BulkTransfer(void)
 
 static void _ReadDieID(uint8 descr[]) 
 {
-    uint8 i;
-    uint8 j = 0u;
-    uint8 value;
-    const char8 CYCODE hex[16u] = "0123456789ABCDEF";
-    const char8 prefix[] = "honet.kk@gmail.com:";  //19文字
-    int len = strlen(prefix);
-    
-    /* Check descriptor validation */
-    if( descr != NULL)
-    {
-        j=2u;
-        
-        for (i=0u; i<len; i++){
-            descr[j++] = prefix[i];
-            descr[j++] = 0;
-        }
+	uint8 i;
+	uint8 j = 0u;
+	uint8 value;
+	const char8 CYCODE hex[16u] = "0123456789ABCDEF";
+	const char8 prefix[] = "honet.kk@gmail.com:";  //19文字
+	int len = strlen(prefix);
 
-        /* fill descriptor : WAFER-ID 16文字*/
-        for(i = 0u; i<8; i++)
-        {
-            value = CY_GET_XTND_REG8((void CYFAR *)(CYDEV_FLSHID_CUST_TABLES_BASE+i));
-            descr[j++] = (uint8)hex[value >> 4u];
-            descr[j++] = 0u;
-            descr[j++] = (uint8)hex[value & 0x0Fu];
-            descr[j++] = 0u;
-        }
-        
-        descr[0u] = j;
-        descr[1u] = USBFS_DESCR_STRING;
-    }
+	/* Check descriptor validation */
+	if( descr != NULL)
+	{
+		j=2u;
+
+		for (i=0u; i<len; i++){
+			descr[j++] = prefix[i];
+			descr[j++] = 0;
+		}
+
+		/* fill descriptor : WAFER-ID 16文字*/
+		for(i = 0u; i<8; i++)
+		{
+			value = CY_GET_XTND_REG8((void CYFAR *)(CYDEV_FLSHID_CUST_TABLES_BASE+i));
+			descr[j++] = (uint8)hex[value >> 4u];
+			descr[j++] = 0u;
+			descr[j++] = (uint8)hex[value & 0x0Fu];
+			descr[j++] = 0u;
+		}
+
+		descr[0u] = j;
+		descr[1u] = USBFS_DESCR_STRING;
+	}
 }
     
 uint8_t SNStringDesc[128];
@@ -161,7 +161,7 @@ int main()
 {
 	EEPROM_Start();
 	led_init();
-
+    
 	led_on(0);
 
 	cbus_reset();
@@ -170,7 +170,11 @@ int main()
 	msg_widx = 0;
 	msg_ridx = 0;
 
-	/* Enable global interrupts */
+	// generage USB S/N string descriptor
+	_ReadDieID(SNStringDesc);
+	USBFS_SerialNumString(SNStringDesc);
+
+    /* Enable global interrupts */
 	CYGlobalIntEnable;
 
 	// setup
@@ -179,10 +183,6 @@ int main()
 
 	// board init.
 	while(0<LENGTH());
-
-	// generage USB S/N string descriptor
-	_ReadDieID(SNStringDesc);
-	USBFS_SerialNumString(SNStringDesc);
 
 	// start the USB.
 	USBFS_Start( 0, USBFS_DWR_VDDD_OPERATION );
