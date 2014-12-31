@@ -211,11 +211,8 @@ typedef enum {
 	// YM262(OPL3)系 =================================================
 	// (未対応) sound-blaster 16 (CT2720) : YMF262-F
 	//   アドレスデコーダ : 不明(16bit以下)
-	//   IOADDR(OPN) : 0088h/008Ah or 0188h/018Ah
 	//   IOADDR(OPL3&PCM?): 20Dxh～? (x=2/4/6/8/A/C/E)
 	CBUS_BOARD_SB16						= 0x00004,
-	CBUS_BOARD_SB16_0188H				= 0x00004,
-	CBUS_BOARD_SB16_0088H				= 0x10004,
 	
 	// (未対応) sound-blaster 16 with YM2203 (CT2720) : YMF262-F, YM2203
 	//   アドレスデコーダ : 不明(16bit以下)
