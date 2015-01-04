@@ -1,0 +1,8 @@
+.bzr/
+Archive/
+Backup/
+c86usb.cydsn/codegentemp/
+c86usb.cydsn/CortexM3/
+*.bak
+*.rpt
+
