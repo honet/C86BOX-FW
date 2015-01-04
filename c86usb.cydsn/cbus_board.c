@@ -555,17 +555,12 @@ void cbus_board_setup(void)
 		case CBUS_BOARD_86_0288H:
 		case CBUS_BOARD_WAVEMASTER_0188H:
 		case CBUS_BOARD_WAVEMASTER_0288H:
-		case CBUS_BOARD_WAVESMIT_0188H:
-		case CBUS_BOARD_WAVESMIT_0288H:
-		case CBUS_BOARD_WAVESTAR_0188H:
-		case CBUS_BOARD_WAVESTAR_0288H:
 			board->nchips = 1;
 			board->control_write = board86_control;
 			board->chip[0].slot = i;
 			board->chip[0].chiptype = CHIP_YM2608NOADPCM;
 			
-			if (type==CBUS_BOARD_86_0288H || type==CBUS_BOARD_WAVEMASTER_0288H ||
-				type==CBUS_BOARD_WAVESMIT_0288H || type==CBUS_BOARD_WAVESTAR_0288H){
+			if (type==CBUS_BOARD_86_0288H || type==CBUS_BOARD_WAVEMASTER_0288H){
 				board->chip[0].areg_addr[0] = 0x288;
 				board->chip[0].areg_addr[1] = 0x28c;
 				board->chip[0].dreg_addr[0] = 0x28a;
@@ -594,6 +589,44 @@ void cbus_board_setup(void)
 			}
 			break;
 
+		// YMF288
+		case CBUS_BOARD_WAVESMIT_0188H:
+		case CBUS_BOARD_WAVESMIT_0288H:
+		case CBUS_BOARD_WAVESTAR_0188H:
+		case CBUS_BOARD_WAVESTAR_0288H:
+		case CBUS_BOARD_WSN_A4F:
+		case CBUS_BOARD_SXM_F:
+		case CBUS_BOARD_SRN_F:
+			board->nchips = 1;
+			board->control_write = board86_control;
+			board->chip[0].slot = i;
+			board->chip[0].chiptype = CHIP_YMF288;
+			
+			if (type==CBUS_BOARD_WAVESMIT_0288H || type==CBUS_BOARD_WAVESTAR_0288H){
+				board->chip[0].areg_addr[0] = 0x288;
+				board->chip[0].areg_addr[1] = 0x28c;
+				board->chip[0].dreg_addr[0] = 0x28a;
+				board->chip[0].dreg_addr[1] = 0x28e;
+			}else{
+				board->chip[0].areg_addr[0] = 0x188;
+				board->chip[0].areg_addr[1] = 0x18c;
+				board->chip[0].dreg_addr[0] = 0x18a;
+				board->chip[0].dreg_addr[1] = 0x18e;
+			}
+			board->chip[0].waitidx = &waitidx_2608[0];
+			board->chip[0].waitdef = &waitdef_2608[0];
+			board->chip[0].writefunc = ym2608_write;
+			board->chip[0].wait_timerif = &timerRes[timeridx++];
+
+			// OPNAマスク解除
+			// bit 1: YM2608(OPNA)マスク設定   : 0=non-mask / 1=OPNA masked
+			// bit 0: YM2608(OPNA)拡張部分機能 : 0=OPN / 1=OPNA
+			d = cbus_read(i, 0xa460);
+			cbus_write(i, 0xa460, (d&0xfc)|0x1);
+			// OPNA初期化
+			ym2608_init(&board->chip[0]);
+			break;
+
 		// ---------------------------------
 		case CBUS_BOARD_118:
 			board->nchips = 1;
@@ -612,6 +645,74 @@ void cbus_board_setup(void)
 			board->chip[0].wait_timerif = &timerRes[timeridx++];
 			board->control_write = 0;
 			break;
+
+		// YMF262 --------------------------------------
+		// いろいろ未検証
+		case CBUS_BOARD_SB16:
+		case CBUS_BOARD_SB16VALUE:
+		case CBUS_BOARD_POWERWINDOW_T64S:
+		case CBUS_BOARD_PCSB2:
+		case CBUS_BOARD_WGS98S:
+		case CBUS_BOARD_SRB_G:
+		case CBUS_BOARD_MIDI_ORCHESTRA_MIDI3:
+			board->nchips = 1;
+			board->chip[1].slot = i;
+			board->chip[1].chiptype = CHIP_YMF262;
+			{
+				// SB16: 2/4/6/8/a/c/eが選択出来るけど、とりあえず0x20d2のみ。
+				uint32_t base = 0x20d2;
+				board->chip[1].areg_addr[0] = base + 0;
+				board->chip[1].dreg_addr[0] = base + 1;
+				board->chip[1].areg_addr[1] = base + 2;
+				board->chip[1].dreg_addr[1] = base + 3;
+			}
+			// FIXME: ウエイト違う.
+			board->chip[1].waitidx = &waitidx_2608[0];
+			board->chip[1].waitdef = &waitdef_2608[0];
+			board->chip[1].writefunc = ym2608_write;
+			board->chip[1].wait_timerif = &timerRes[timeridx++];
+			break;
+
+		case CBUS_BOARD_SB16_2203_0188H:
+		case CBUS_BOARD_SB16_2203_0088H:
+			board->nchips = 1;
+			board->control_write = 0;
+			board->chip[0].slot = i;
+			board->chip[0].chiptype = CHIP_YM2203;
+			if (type==CBUS_BOARD_SB16_2203_0088H){
+				board->chip[0].areg_addr[0] = 0x088;
+				board->chip[0].dreg_addr[0] = 0x08a;
+			}else{
+				board->chip[0].areg_addr[0] = 0x188;
+				board->chip[0].dreg_addr[0] = 0x18a;
+			}
+			// FIXME: たぶんウエイト違うけど、資料が無い。
+			board->chip[0].waitidx = &waitidx_2608[0];
+			board->chip[0].waitdef = &waitdef_2203_MC4[0];
+			board->chip[0].writefunc = ym2608_write;
+			board->chip[0].wait_timerif = &timerRes[timeridx++];
+			
+			if(timeridx>=NTIMERS)
+				break;
+			
+			board->nchips = 2;
+			board->chip[1].slot = i;
+			board->chip[1].chiptype = CHIP_YMF262;
+			{
+				// 2/4/6/8/a/c/eが選択出来るけど、とりあえず0x20d2のみ。
+				uint32_t base = 0x20d2;
+				board->chip[1].areg_addr[0] = base + 0;
+				board->chip[1].dreg_addr[0] = base + 1;
+				board->chip[1].areg_addr[1] = base + 2;
+				board->chip[1].dreg_addr[1] = base + 3;
+			}
+			// FIXME: ウエイト違う.
+			board->chip[1].waitidx = &waitidx_2608[0];
+			board->chip[1].waitdef = &waitdef_2608[0];
+			board->chip[1].writefunc = ym2608_write;
+			board->chip[1].wait_timerif = &timerRes[timeridx++];
+			break;
+
 
 		case CBUS_BOARD_UNKNOWN:
 		default:

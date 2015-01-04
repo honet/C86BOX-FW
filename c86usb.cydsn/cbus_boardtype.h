@@ -207,6 +207,12 @@ typedef enum {
 	//   SOUNDID : 無し
 	//   IOADDR : 0188h/018Ah/018Ch/018Eh
 	CBUS_BOARD_SXM_F					= 0x000f3,
+	
+	// (未対応) SRN-F : YMF288-M
+	//   アドレスデコーダ: 不明
+	//   SOUNDID : 無し
+	//   IOADDR : 0188h/018Ah/018Ch/018Eh
+	CBUS_BOARD_SRN_F					= 0x00103,
 
 
 	// YM262(OPL3)系 =================================================
@@ -225,10 +231,7 @@ typedef enum {
 	
 	// (未対応) sound-blaster 16Value (CT3720) : YMF262-F
 	//   アドレスデコーダ : 不明(16bit以下)
-	//   IOADDR(OPN) : 0088h/008Ah or 0188h/018Ah
 	CBUS_BOARD_SB16VALUE				= 0x00024,
-	CBUS_BOARD_SB16VALUE_0188H			= 0x00024,
-	CBUS_BOARD_SB16VALUE_0088H			= 0x10024,
 	
 	// (未対応) canopus PowerWindow T64S : YMF262-M
 	CBUS_BOARD_POWERWINDOW_T64S			= 0x00034,
