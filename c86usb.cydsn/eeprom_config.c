@@ -69,7 +69,7 @@ void conf_set_board_type(uint8_t slot, uint32_t type)
 	
 	conf_check();
 
-	memcpy(buff, base+16, 16);
+	memcpy(buff, (uint8_t*)(base+16), 16);
 	write32(buff+(slot<<2), type);
 	EEPROM_Write(buff, 1);
 }
