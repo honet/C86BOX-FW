@@ -13,17 +13,36 @@
 #include "cbus.h"
 #include "cbus_board.h"
 #include "sound_chip.h"
+#include "eeprom_config.h"
 #include "usb_vendor_request.h"
 
+// MESSAGE DEFINITION ------------------------------------------------------
 // 00 [7:4]slot,[3:1]chip,[0:0]ex addr data
-// FE nn nn nn nsync
+// 10 cc dd dd  slot.A write control : cc=control no, dd=data
+// 11 cc dd dd  slot.B write control : cc=control no, dd=data
+// 12 cc dd dd  slot.C write control(reserved) : cc=control no, dd=data
+// 13 cc dd dd  slot.D write control(reserved) : cc=control no, dd=data
+
+// f0 sa aa aa  C-BUS address set for data write : aa=addr[19:0]
+// f1 s0 dd dd  CBUS data write : s=slot no
+// f2 sa aa aa  CBUS data read
+// FE nn nn nn  nsync
+
 #define MSGBUF_SIZE      1024//(1024*8) // must be equal to 2^n
 #define MSGBUF_SIZEMASK  (MSGBUF_SIZE-1)
+
+volatile uint8_t ep2inbuf[32];
 
 volatile uint32_t msgbuf[MSGBUF_SIZE];
 volatile uint32_t msg_widx;
 volatile uint32_t msg_ridx;
 volatile uint8_t ticked = 0;
+
+
+#define UnassignedAddress 0
+
+#define USB_OUT_EP 0x01
+#define USB_IN_EP  0x02
 
 #define IDX(x)		( (x)&MSGBUF_SIZEMASK )
 #define LENGTH()	(msg_widx-msg_ridx)
@@ -58,22 +77,29 @@ CY_ISR(Tick)
 
 void ProcessData()
 {
+	static uint16_t cbus_addr = 0;
+
 	if(ticked && LENGTH()>0){
 		uint32_t d = msgbuf[IDX(msg_ridx)];
-		uint32_t cmd = d&0xff000000;
+		uint8_t cmd = d>>24;
 
-		if(cmd==0){
-			uint8_t ex = (d>>16)&0xff;
-			uint8_t addr = (d>>8)&0xff;
-			uint8_t data = (d&0xff);
-			uint8_t slot = (ex>>4)&0x01;
+		switch(cmd){
+		case 0x0:
+			{
+				uint8_t ex = (d>>16)&0xff;
+				uint8_t addr = (d>>8)&0xff;
+				uint8_t data = (d&0xff);
+				uint8_t slot = (ex>>4)&0x01;
 
-			led_on(2+slot);
-			write_chip(ex, addr, data);
-			led_off(2+slot);
+				led_on(2+slot);
+				write_chip(ex, addr, data);
+				led_off(2+slot);
 
-			msg_ridx++;
-		}else if(cmd==0xfe000000){
+				msg_ridx++;
+				break;
+			}
+
+		case 0xfe:
 			// sync
 			if(d&0xffffff){
 				//nsync
@@ -84,18 +110,42 @@ void ProcessData()
 				msg_ridx++;
 			}
             ticked = 0;
-		}else{
+			break;
+
+		case 0x10: // 10 cc dd dd  slot.A write control : cc=control no, dd=data
+			cbus_board_control_write(0, (d>>16)&0xff, d&0xffff);
+			break;
+		case 0x11: // 11 cc dd dd  slot.B write control : cc=control no, dd=data
+			cbus_board_control_write(1, (d>>16)&0xff, d&0xffff);
+			break;
+			
+		case 0xf0: // f0 0a aa aa  C-BUS address set for data write
+			cbus_addr = d&0x0fffff;
+			break;
+
+		case 0xf1: // f1 s0 dd dd  CBUS data write
+			cbus_write( (d>>20)&0xf, cbus_addr, d&0xffff );
+			break;
+
+		case 0xf2: // f2 sa aa aa  CBUS data read
+			{
+				cbus_addr = d&0x0fffff;
+				uint16_t x = cbus_read( (d>>20)&0xf, cbus_addr );
+				
+				// set data
+				*((volatile uint16_t*)&ep2inbuf[0]) = x;
+				USBFS_LoadInEP(USB_IN_EP, (uint8_t*)ep2inbuf, 2);
+			}
+			break;
+			
+		default:
 			//unknown command.
 			msg_ridx++;
+			break;
 		}
 	}
 }
 
-
-#define UnassignedAddress 0
-
-#define USB_OUT_EP 0x01
-#define USB_IN_EP  0x02 // 今のところ使っていない
 
 void BulkTransfer(void)
 {
@@ -116,6 +166,7 @@ void BulkTransfer(void)
 			}
 			msg_widx = msg_widx + intcount;
 		}
+		USBFS_EnableOutEP(USB_OUT_EP);
 	}
 }
 
@@ -193,7 +244,7 @@ int main()
 	for (;;){
 		if (USBFS_GetConfiguration() != 0){
 			if (USBFS_IsConfigurationChanged() != 0){
-				USBFS_EnableOutEP(1);
+				USBFS_EnableOutEP(USB_OUT_EP);
 				led_on(1);
 			}
 
@@ -201,18 +252,21 @@ int main()
 			ProcessData();
 
 			if( USBFS_transferState == USBFS_TRANS_STATE_IDLE ){
-				// reset request.
-				if ( usbReq_reset ){
+				if (usbReq_reset){
 					cbus_reset();
 					for(int i=0; i<NMAXBOARDS; i++){
 						cbus_board_init(i);
 					}
-                    usbReq_reset = 0;
+					usbReq_reset = 0;
 				}
-				// control request
-				else if ( usbReq_control ){
-					cbus_board_control_write( usbReq_boardIdx, usbReq_controlIdx, usbReq_controlValue );
-                    usbReq_control = 0;
+
+				if (usbReq_setBoardType){
+					for(int i=0; i<NMAXBOARDS; i++){
+						if (usbReq_setBoardType & (0x01<<i)){
+							conf_set_board_type( i, usbReq_boardType[i] );
+						}
+					}
+					usbReq_setBoardType = 0;
 				}
 			}
 		}else{

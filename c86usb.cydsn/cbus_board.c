@@ -12,7 +12,7 @@ typedef struct tag_CBUS_BOARD_INFO{
 	CBUS_BOARD_TYPE boardtype;
 	uint8_t nchips;
 	CHIP_INFO chip[NMAXCHIPS];
-	void (*control_write)(struct tag_CBUS_BOARD_INFO *board, uint16_t idx, uint16_t data);
+	void (*control_write)(struct tag_CBUS_BOARD_INFO *board, uint8_t idx, uint16_t data);
 	uint16_t (*control_read)(struct tag_CBUS_BOARD_INFO *board, uint16_t idx);
 } CBUS_BOARD_INFO;
 
@@ -32,7 +32,9 @@ typedef enum {
 
 CBUS_BOARD_INFO boards[NMAXBOARDS];
 
-void board86_control(CBUS_BOARD_INFO *board, uint16_t idx, uint16_t data);
+// ------------------------------------
+// function declaration
+void board86_control(CBUS_BOARD_INFO *board, uint8_t idx, uint16_t data);
 
 
 uint32_t cbus_get_board_type(uint8_t slot)
@@ -311,14 +313,21 @@ void cbus_board_setup(void)
 
 		// ---------------------------------
 		// YM2203 + YM3812
-		case CBUS_BOARD_SOUND_ORCHESTRA:
-		case CBUS_BOARD_SOUND_ORCHESTRA_L:
+		case CBUS_BOARD_SOUND_ORCHESTRA_0188H:
+		case CBUS_BOARD_SOUND_ORCHESTRA_0088H:
+		case CBUS_BOARD_SOUND_ORCHESTRA_L_0188H:
+		case CBUS_BOARD_SOUND_ORCHESTRA_L_0088H:
 			board->nchips = 1;
 			board->control_write = 0;
 			board->chip[0].slot = i;
 			board->chip[0].chiptype = CHIP_YM2203;
-			board->chip[0].areg_addr[0] = 0x188;
-			board->chip[0].dreg_addr[0] = 0x18a;
+			if (type==CBUS_BOARD_SOUND_ORCHESTRA_0088H||type==CBUS_BOARD_SOUND_ORCHESTRA_L_0088H){
+				board->chip[0].areg_addr[0] = 0x088;
+				board->chip[0].dreg_addr[0] = 0x08a;
+			}else{
+				board->chip[0].areg_addr[0] = 0x188;
+				board->chip[0].dreg_addr[0] = 0x18a;
+			}
 			// FIXME: たぶんウエイト違うけど、資料が無い。
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2203_MC4[0];
@@ -331,8 +340,13 @@ void cbus_board_setup(void)
 			board->nchips = 2;
 			board->chip[1].slot = i;
 			board->chip[1].chiptype = CHIP_YM3812;
-			board->chip[1].areg_addr[0] = 0x18c;
-			board->chip[1].dreg_addr[0] = 0x18e;
+			if (type==CBUS_BOARD_SOUND_ORCHESTRA_0088H||type==CBUS_BOARD_SOUND_ORCHESTRA_L_0088H){
+				board->chip[1].areg_addr[0] = 0x08c;
+				board->chip[1].dreg_addr[0] = 0x08e;
+			}else{
+				board->chip[1].areg_addr[0] = 0x18c;
+				board->chip[1].dreg_addr[0] = 0x18e;
+			}
 			// FIXME: ウエイト違う.
 			board->chip[1].waitidx = &waitidx_2608[0];
 			board->chip[1].waitdef = &waitdef_2203_MC4[0];
@@ -342,7 +356,8 @@ void cbus_board_setup(void)
 			
 		// ---------------------------------
 		// YM2203 + Y8950
-		case CBUS_BOARD_SOUND_ORCHESTRA_V:
+		case CBUS_BOARD_SOUND_ORCHESTRA_V_0188H:
+		case CBUS_BOARD_SOUND_ORCHESTRA_V_0088H:
 		case CBUS_BOARD_SOUND_ORCHESTRA_VS_0188H:
 		case CBUS_BOARD_SOUND_ORCHESTRA_VS_0088H:
 		case CBUS_BOARD_SOUND_ORCHESTRA_LS_0188H:
@@ -352,7 +367,9 @@ void cbus_board_setup(void)
 			board->control_write = 0;
 			board->chip[0].slot = i;
 			board->chip[0].chiptype = CHIP_YM2203;
-			if( type==CBUS_BOARD_SOUND_ORCHESTRA_VS_0088H || type==CBUS_BOARD_SOUND_ORCHESTRA_LS_0088H ){
+			if( type==CBUS_BOARD_SOUND_ORCHESTRA_V_0088H ||
+				type==CBUS_BOARD_SOUND_ORCHESTRA_VS_0088H ||
+				type==CBUS_BOARD_SOUND_ORCHESTRA_LS_0088H ){
 				board->chip[0].areg_addr[0] = 0x088;
 				board->chip[0].dreg_addr[0] = 0x08a;
 			}else{
@@ -626,7 +643,7 @@ void write_chip(uint8_t exaddr, uint8_t addr, uint8_t data)
 	chip->writefunc(chip, ex, addr, data);
 }
 
-void board86_control(CBUS_BOARD_INFO *board, uint16_t idx, uint16_t data)
+void board86_control(CBUS_BOARD_INFO *board, uint8_t idx, uint16_t data)
 {
 	//000b= VOL0(FM音源直接出力レベル)
 	//001b= VOL1(FM音源間接出力レベル)

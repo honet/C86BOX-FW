@@ -12,6 +12,7 @@
 #include <project.h>
 #include "cbus.h"
 #include "cbus_board.h"
+#include "eeprom_config.h"
 #include "usb_vendor_request.h"
 
 #define WBVAL(x)  (x & 0xFF),((x >> 8) & 0xFF)
@@ -30,55 +31,54 @@
 #define PROPERTY_DATA_TYPE_REG_MULTI_SZ				DWBVAL(7)
 
 // VENDOR REQUEST ------------------------------------------------------------
-#define USBFS_VENDOR_GET_BOARD_INFO		0x81
+#define C86_VENDOR_GET_BOARD_INFO		0x81
 // SETUP:
 //   bmRequestType: DeviceToHost, vendor, device
-//   bRequest     : USBFS_VENDOR_GET_BOARD_INFO
+//   bRequest     : C86_VENDOR_GET_BOARD_INFO
 //   wValue       : ignore
 //   wIndex       : ボード番号(0~4)
 //   wLength      : sizeof(BOARD_INFO)
 // DATA STAGE:
 //   BOARD_INFO
 
-#define USBFS_VENDOR_GET_FW_VER			0x82
+#define C86_VENDOR_GET_FW_VER			0x82
 // SETUP:
 //   bmRequestType: DeviceToHost, vendor, device
-//   bRequest     : USBFS_VENDOR_GET_FW_VER
+//   bRequest     : C86_VENDOR_GET_FW_VER
 //   wValue       : ignore
 //   wIndex       : ignore
 //   wLength      : 4
 // DATA STAGE:
 //   (uint32_t)verison
 
-#define USBFS_VENDOR_SET_BOARD_TYPE		0x14
+#define C86_VENDOR_GET_CONF_BOARD_TYPE		0x13
 // SETUP:
-//   bmRequestType: HostToDevice, vendor, device
-//   bRequest     : USBFS_VENDOR_CBUS_RESET
+//   bmRequestType: DeviceToHost, vendor, device
+//   bRequest     : C86_VENDOR_GET_BOARD_INFO
 //   wValue       : ignore
 //   wIndex       : ボード番号(0~4)
 //   wLength      : 4
 // DATA STAGE:
 //   (uint32_t)board_type
 
-
-#define USBFS_VENDOR_CBUS_RESET			0x11
+#define C86_VENDOR_SET_CONF_BOARD_TYPE		0x14
 // SETUP:
 //   bmRequestType: HostToDevice, vendor, device
-//   bRequest     : USBFS_VENDOR_CBUS_RESET
+//   bRequest     : C86_VENDOR_CBUS_RESET
+//   wValue       : ignore
+//   wIndex       : ボード番号(0~4)
+//   wLength      : 4
+// DATA STAGE:
+//   (uint32_t)board_type
+
+#define C86_VENDOR_SYSTEM_RESET			0x11
+// SETUP:
+//   bmRequestType: HostToDevice, vendor, device
+//   bRequest     : C86_VENDOR_SYSTEM_RESET
 //   wValue       : ignore
 //   wIndex       : ignore
 //   wLength      : 0
 
-
-#define USBFS_VENDOR_BOARD_CONTROL		0x13
-// SETUP:
-//   bmRequestType: HostToDevice, vendor, device
-//   bRequest     : USBFS_VENDOR_BOARD_CONTROL
-//   wValue       : コントロール番号
-//   wIndex       : ボード番号(0~4)
-//   wLength      : データ長
-// DATTA STAGE:
-//   (uint16_t)data
 
 // ---------------------------------------------------------------------------
 typedef struct {
@@ -89,13 +89,13 @@ typedef struct {
 
 BOARD_INFO board_info;
 
+uint32_t config_board_type = 0;
+
 uint32_t fwversion = 0x2;
 
 volatile uint8_t usbReq_reset = 0;
-volatile uint8_t usbReq_control = 0;
-volatile uint8_t usbReq_boardIdx = 0;
-volatile uint16_t usbReq_controlIdx = 0;
-volatile uint16_t usbReq_controlValue = 0;
+volatile uint8_t usbReq_setBoardType = 0;
+volatile uint32_t usbReq_boardType[NMAXBOARDS] = {0};
 
 
 // Microsoft Specific---------------------------------------------------------
@@ -186,7 +186,7 @@ uint8 USBFS_HandleVendorRqst(void)
 			//#endif /*  USBFS_ENABLE_MSOS_STRING */
 			break;
 
-		case USBFS_VENDOR_GET_BOARD_INFO:
+		case C86_VENDOR_GET_BOARD_INFO:
 			{
 				// board info
 				uint16_t index = CY_GET_REG16(USBFS_wIndex);
@@ -202,8 +202,20 @@ uint8 USBFS_HandleVendorRqst(void)
 				}
 			}
 			break;
-        
-        case USBFS_VENDOR_GET_FW_VER:
+			
+		case C86_VENDOR_GET_CONF_BOARD_TYPE:
+			{
+				uint16_t index = CY_GET_REG16(USBFS_wIndex);
+				if (index<NMAXBOARDS){
+					config_board_type = conf_get_board_type(index);
+					USBFS_currentTD.pData = (volatile uint8 *)&config_board_type;
+					USBFS_currentTD.count = 4;
+					requestHandled  = USBFS_InitControlRead();
+				}
+			}
+			break;
+			
+		case C86_VENDOR_GET_FW_VER:
 			{
 				// firmware version
 				USBFS_currentTD.pData = (volatile uint8 *)&fwversion;
@@ -220,24 +232,20 @@ uint8 USBFS_HandleVendorRqst(void)
 	{
 		/* Control Write */
 		switch (CY_GET_REG8(USBFS_bRequest)) {
-		case USBFS_VENDOR_CBUS_RESET:
+		case C86_VENDOR_SYSTEM_RESET:
 			// reset
 			usbReq_reset = 1;
 			requestHandled = USBFS_InitNoDataControlTransfer();
 			break;
 			
-			
-		case USBFS_VENDOR_BOARD_CONTROL:
+		case C86_VENDOR_SET_CONF_BOARD_TYPE:
 			{
-				// volume control, etc.
 				uint16_t index = CY_GET_REG16(USBFS_wIndex);
 				if (index<NMAXBOARDS){
-					usbReq_control = 1;
-					usbReq_boardIdx = index;
-					usbReq_controlIdx = CY_GET_REG16(USBFS_wValue);
+                    usbReq_setBoardType |= (1<<index);
 					
-					USBFS_currentTD.count = 2;
-					USBFS_currentTD.pData = (volatile uint8_t*)&usbReq_controlValue;
+					USBFS_currentTD.count = 4;
+					USBFS_currentTD.pData = (volatile uint8_t*)&usbReq_boardType[index];
 
 					requestHandled = USBFS_InitControlWrite();
 				}
