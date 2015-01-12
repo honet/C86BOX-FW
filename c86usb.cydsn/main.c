@@ -36,6 +36,7 @@ volatile uint8_t ep2inbuf[32];
 volatile uint32_t msgbuf[MSGBUF_SIZE];
 volatile uint32_t msg_widx;
 volatile uint32_t msg_ridx;
+volatile uint32_t msg_length;
 volatile uint8_t ticked = 0;
 
 
@@ -45,8 +46,7 @@ volatile uint8_t ticked = 0;
 #define USB_IN_EP  0x02
 
 #define IDX(x)		( (x)&MSGBUF_SIZEMASK )
-#define LENGTH()	(msg_widx-msg_ridx)
-#define REMAIN()	(MSGBUF_SIZE - LENGTH())
+#define REMAIN()	(MSGBUF_SIZE - msg_length)
 
 // -------------------------------------
 static uint8_t ledval = 0xff;
@@ -79,7 +79,7 @@ void ProcessData()
 {
 	static uint16_t cbus_addr = 0;
 
-	if(ticked && LENGTH()>0){
+	if(ticked && msg_length>0){
 		uint32_t d = msgbuf[IDX(msg_ridx)];
 		uint8_t cmd = d>>24;
 
@@ -96,6 +96,7 @@ void ProcessData()
 				led_off(2+slot);
 
 				msg_ridx++;
+                msg_length--;
 				break;
 			}
 
@@ -108,39 +109,61 @@ void ProcessData()
 			}else{
 				//1sync
 				msg_ridx++;
+                msg_length--;
 			}
             ticked = 0;
 			break;
 
 		case 0x10: // 10 cc dd dd  slot.A write control : cc=control no, dd=data
 			cbus_board_control_write(0, (d>>16)&0xff, d&0xffff);
+			msg_ridx++;
+            msg_length--;
 			break;
 		case 0x11: // 11 cc dd dd  slot.B write control : cc=control no, dd=data
 			cbus_board_control_write(1, (d>>16)&0xff, d&0xffff);
+			msg_ridx++;
+            msg_length--;
 			break;
 			
 		case 0xf0: // f0 0a aa aa  C-BUS address set for data write
 			cbus_addr = d&0x0fffff;
+			msg_ridx++;
+            msg_length--;
 			break;
 
 		case 0xf1: // f1 s0 dd dd  CBUS data write
-			cbus_write( (d>>20)&0xf, cbus_addr, d&0xffff );
+			{
+				uint8_t slot = (d>>20)&0x0f;
+				if (slot<NMAXBOARDS){
+					led_on(2+slot);
+					cbus_write( slot, cbus_addr, d&0xffff );
+					led_off(2+slot);
+				}
+				msg_ridx++;
+				msg_length--;
+			}
 			break;
 
 		case 0xf2: // f2 sa aa aa  CBUS data read
 			{
+                uint8_t slot = (d>>20)&0x0f;
 				cbus_addr = d&0x0fffff;
-				uint16_t x = cbus_read( (d>>20)&0xf, cbus_addr );
+                led_on(2+slot);
+				uint16_t x = cbus_read( slot, cbus_addr );
+                led_off(2+slot);
 				
 				// set data
 				*((volatile uint16_t*)&ep2inbuf[0]) = x;
 				USBFS_LoadInEP(USB_IN_EP, (uint8_t*)ep2inbuf, 2);
 			}
+			msg_ridx++;
+            msg_length--;
 			break;
 			
 		default:
 			//unknown command.
 			msg_ridx++;
+            msg_length--;
 			break;
 		}
 	}
@@ -149,7 +172,7 @@ void ProcessData()
 
 void BulkTransfer(void)
 {
-	if (USBFS_bGetEPState(USB_OUT_EP) == USBFS_OUT_BUFFER_FULL)
+	if (USBFS_GetEPState(USB_OUT_EP) == USBFS_OUT_BUFFER_FULL)
 	{
 		uint8_t count = USBFS_wGetEPCount(USB_OUT_EP);
         uint8_t intcount = count>>2;
@@ -164,9 +187,10 @@ void BulkTransfer(void)
 				USBFS_ReadOutEP(USB_OUT_EP, (uint8_t*)&msgbuf[widx], (MSGBUF_SIZE-widx));
 				USBFS_ReadOutEP(USB_OUT_EP, (uint8_t*)&msgbuf[0], widx+intcount-MSGBUF_SIZE);
 			}
-			msg_widx = msg_widx + intcount;
+			msg_widx += intcount;
+            msg_length+=intcount;
+			USBFS_EnableOutEP(USB_OUT_EP);
 		}
-		USBFS_EnableOutEP(USB_OUT_EP);
 	}
 }
 
@@ -220,6 +244,7 @@ int main()
 
 	msg_widx = 0;
 	msg_ridx = 0;
+    msg_length = 0;
 
 	// generage USB S/N string descriptor
 	_ReadDieID(SNStringDesc);
@@ -233,7 +258,7 @@ int main()
 	TickTimer_Start();
 
 	// board init.
-	while(0<LENGTH());
+	while(0<msg_length);
 
 	// start the USB.
 	USBFS_Start( 0, USBFS_DWR_VDDD_OPERATION );
