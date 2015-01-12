@@ -109,6 +109,8 @@ extern const uint16_t waitdef_2203_MC4[5];
 extern const uint16_t waitdef_2608[5];
 extern const uint8_t waitidx_2608[512];
 
+void ym2203_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data);
+
 void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data);
 uint8_t ym2608_read_status(CHIP_INFO *chip, uint8_t ex);
 void ym2608_write_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t size);

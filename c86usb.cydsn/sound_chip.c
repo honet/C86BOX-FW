@@ -46,6 +46,35 @@ const uint8_t waitidx_2608[512] = {
 
 
 // exaddr = [7:4]slot,[3:1]chip,[0:0]ex
+void ym2203_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
+{
+	//uint8_t ex = exaddr&0x01;
+	uint16_t widx = addr;
+	uint8_t  waitidx;
+	uint16_t waitcount;
+
+	// wait
+	chip->wait_timerif->Wait();
+
+	// write address ------------
+	cbus_write(chip->slot, chip->areg_addr[0], addr);
+	// set a after wait timer
+	waitidx = chip->waitidx[widx];
+	waitcount = chip->waitdef[waitidx&0x0f];
+	chip->wait_timerif->Set(waitcount);
+	// wait
+	chip->wait_timerif->Wait();
+
+	// write data --------------
+	cbus_write(chip->slot, chip->dreg_addr[0], data);
+	// set a after wait timer
+	waitcount = chip->waitdef[(waitidx>>4)&0x0f];
+	chip->wait_timerif->Set(waitcount);
+}
+
+
+
+// exaddr = [7:4]slot,[3:1]chip,[0:0]ex
 void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 {
 	uint8_t ex = exaddr&0x01;
@@ -56,27 +85,56 @@ void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 	// wait
 	chip->wait_timerif->Wait();
 
-	// CHECK ME!!
-	// リズムイベント発行前に強制ウェイトを入れないとなぜかtomtomが暴発する。
-	if( ex==0 && addr==0x10 ){
-		chip->wait_timerif->Set(1000);
-		chip->wait_timerif->Wait();
+	if (ex==1 && addr==0x08){
+		// ADPCMはウェイト無し
+		// write address
+		cbus_write(chip->slot, chip->areg_addr[ex], addr);
+		// write data
+		cbus_write(chip->slot, chip->dreg_addr[ex], data);
+		
+		// reset BRDY flag --------------
+		cbus_write(chip->slot, chip->areg_addr[1], OPNA_ADPCM_FLAG_REG);
+		cbus_write(chip->slot, chip->dreg_addr[1], 
+						OPNA_ADPCM_FLAG_BIT_MASK_ALL & ~OPNA_ADPCM_FLAG_BIT_MASK_EOS );
+		
+		// enable BRDY and EOS flag. ----
+		cbus_write(chip->slot, chip->dreg_addr[1], 
+						OPNA_ADPCM_FLAG_BIT_MASK_ALL &
+						~( OPNA_ADPCM_FLAG_BIT_MASK_BRDV |
+						   OPNA_ADPCM_FLAG_BIT_MASK_EOS ) );
+
+		// status check.
+		for( int retry = 0; retry<100; retry++ ){
+			volatile uint8_t status = ym2608_read_status( chip, 1 );
+			if( status & OPNA_STATUS_BIT_BRDY )
+				break;
+			chip->wait_timerif->Set(100);
+			chip->wait_timerif->Wait();
+		}
 	}
+	else{
+		// CHECK ME!!
+		// リズムイベント発行前に強制ウェイトを入れないとなぜかtomtomが暴発する。
+		if( ex==0 && addr==0x10 ){
+			chip->wait_timerif->Set(1000);
+			chip->wait_timerif->Wait();
+		}
 
-	// write address ------------
-	cbus_write(chip->slot, chip->areg_addr[ex], addr);
-	// set a after wait timer
-	waitidx = chip->waitidx[widx];
-	waitcount = chip->waitdef[waitidx&0x0f];
-	chip->wait_timerif->Set(waitcount);
-	// wait
-	chip->wait_timerif->Wait();
+		// write address ------------
+		cbus_write(chip->slot, chip->areg_addr[ex], addr);
+		// set a after wait timer
+		waitidx = chip->waitidx[widx];
+		waitcount = chip->waitdef[waitidx&0x0f];
+		chip->wait_timerif->Set(waitcount);
+		// wait
+		chip->wait_timerif->Wait();
 
-	// write data --------------
-	cbus_write(chip->slot, chip->dreg_addr[ex], data);
-	// set a after wait timer
-	waitcount = chip->waitdef[(waitidx>>4)&0x0f];
-	chip->wait_timerif->Set(waitcount);
+		// write data --------------
+		cbus_write(chip->slot, chip->dreg_addr[ex], data);
+		// set a after wait timer
+		waitcount = chip->waitdef[(waitidx>>4)&0x0f];
+		chip->wait_timerif->Set(waitcount);
+	}
 }
 
 uint8_t ym2608_read(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr)

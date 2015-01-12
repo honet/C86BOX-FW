@@ -208,6 +208,9 @@ static uint32_t auto_detect(int idx)
 	// SpeakBoardとか0xa460非サポートな奴用
     // NOTE: SpeakBoardはアドレスを12bitしかデコードしていないようだ。
 
+	// YMF288 mode select 
+	chip_write(idx, 0x188, 0x18a, 0x20, 0x2 );  // bit0:STANDBY, bit1:YMF288 mode
+	
 	// 0xff OPNA device-id
 	uint16_t chiptype = chip_read(idx, 0x188, 0x18a, 0xff);
 	
@@ -303,7 +306,7 @@ void cbus_board_setup(void)
 			// FIXME: たぶんウエイト違うけど、資料が無い。
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2203_MC4[0];
-			board->chip[0].writefunc = ym2608_write;
+			board->chip[0].writefunc = ym2203_write;
 			board->chip[0].wait_timerif = &timerRes[timeridx++];
 			board->control_write = 0;
 			
@@ -331,7 +334,7 @@ void cbus_board_setup(void)
 			// FIXME: たぶんウエイト違うけど、資料が無い。
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2203_MC4[0];
-			board->chip[0].writefunc = ym2608_write;
+			board->chip[0].writefunc = ym2203_write;
 			board->chip[0].wait_timerif = &timerRes[timeridx++];
 			
 			if(timeridx>=NTIMERS)
@@ -350,7 +353,7 @@ void cbus_board_setup(void)
 			// FIXME: ウエイト違う.
 			board->chip[1].waitidx = &waitidx_2608[0];
 			board->chip[1].waitdef = &waitdef_2203_MC4[0];
-			board->chip[1].writefunc = ym2608_write;
+			board->chip[1].writefunc = ym2203_write;
 			board->chip[1].wait_timerif = &timerRes[timeridx++];
 			break;
 			
@@ -379,7 +382,7 @@ void cbus_board_setup(void)
 			// FIXME: たぶんウエイト違うけど、資料が無い。
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2203_MC4[0];
-			board->chip[0].writefunc = ym2608_write;
+			board->chip[0].writefunc = ym2203_write;
 			board->chip[0].wait_timerif = &timerRes[timeridx++];
 			
 			if(timeridx>=NTIMERS)
@@ -398,7 +401,7 @@ void cbus_board_setup(void)
 			// FIXME: ウエイト違う.
 			board->chip[1].waitidx = &waitidx_2608[0];
 			board->chip[1].waitdef = &waitdef_2203_MC4[0];
-			board->chip[1].writefunc = ym2608_write;
+			board->chip[1].writefunc = ym2203_write;
 			board->chip[1].wait_timerif = &timerRes[timeridx++];
 			break;
 			
@@ -543,7 +546,7 @@ void cbus_board_setup(void)
 			// FIXME: ウエイト違う.
 			board->chip[1].waitidx = &waitidx_2608[0];
 			board->chip[1].waitdef = &waitdef_2203_MC4[0];
-			board->chip[1].writefunc = ym2608_write;
+			board->chip[1].writefunc = ym2203_write;
 			board->chip[1].wait_timerif = &timerRes[timeridx++];
 			
 			break;
@@ -589,14 +592,11 @@ void cbus_board_setup(void)
 			}
 			break;
 
-		// YMF288
+		// YMF288 0xA460有り
 		case CBUS_BOARD_WAVESMIT_0188H:
 		case CBUS_BOARD_WAVESMIT_0288H:
 		case CBUS_BOARD_WAVESTAR_0188H:
 		case CBUS_BOARD_WAVESTAR_0288H:
-		case CBUS_BOARD_WSN_A4F:
-		case CBUS_BOARD_SXM_F:
-		case CBUS_BOARD_SRN_F:
 			board->nchips = 1;
 			board->control_write = board86_control;
 			board->chip[0].slot = i;
@@ -623,7 +623,30 @@ void cbus_board_setup(void)
 			// bit 0: YM2608(OPNA)拡張部分機能 : 0=OPN / 1=OPNA
 			d = cbus_read(i, 0xa460);
 			cbus_write(i, 0xa460, (d&0xfc)|0x1);
-			// OPNA初期化
+
+			// FIXME:OPNAとして初期化
+			ym2608_init(&board->chip[0]);
+			break;
+
+		// YMF288 0xA460無し
+		case CBUS_BOARD_WSN_A4F:
+		case CBUS_BOARD_SXM_F:
+		case CBUS_BOARD_SRN_F:
+			board->nchips = 1;
+			board->control_write = 0; // FIXME!
+			board->chip[0].slot = i;
+			board->chip[0].chiptype = CHIP_YMF288;
+			
+			board->chip[0].areg_addr[0] = 0x188;
+			board->chip[0].areg_addr[1] = 0x18c;
+			board->chip[0].dreg_addr[0] = 0x18a;
+			board->chip[0].dreg_addr[1] = 0x18e;
+			board->chip[0].waitidx = &waitidx_2608[0];
+			board->chip[0].waitdef = &waitdef_2608[0];
+			board->chip[0].writefunc = ym2608_write;
+			board->chip[0].wait_timerif = &timerRes[timeridx++];
+
+			// FIXME:OPNAとして初期化
 			ym2608_init(&board->chip[0]);
 			break;
 
@@ -689,7 +712,7 @@ void cbus_board_setup(void)
 			// FIXME: たぶんウエイト違うけど、資料が無い。
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2203_MC4[0];
-			board->chip[0].writefunc = ym2608_write;
+			board->chip[0].writefunc = ym2203_write;
 			board->chip[0].wait_timerif = &timerRes[timeridx++];
 			
 			if(timeridx>=NTIMERS)
@@ -709,6 +732,7 @@ void cbus_board_setup(void)
 			// FIXME: ウエイト違う.
 			board->chip[1].waitidx = &waitidx_2608[0];
 			board->chip[1].waitdef = &waitdef_2608[0];
+			// FIXME
 			board->chip[1].writefunc = ym2608_write;
 			board->chip[1].wait_timerif = &timerRes[timeridx++];
 			break;
