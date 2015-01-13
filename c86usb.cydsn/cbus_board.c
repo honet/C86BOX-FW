@@ -251,17 +251,17 @@ static uint32_t auto_detect(int idx)
 			}
 		}else if (0x02==chiptype){ // YMF288
 			switch(base){
-			case 0x088:  type = CBUS_BOARD_UNKNOWN; // そんなの無いはず
-			case 0x188:  type = CBUS_BOARD_SXM_F;
-			case 0x288:  type = CBUS_BOARD_WAVESTAR_0288H; // そんなの無いはず. A460判定で取られるはずだけど一応。
-			case 0x388:  type = CBUS_BOARD_UNKNOWN; // そんなの無いはず
+			case 0x088:  type = CBUS_BOARD_UNKNOWN; break;// そんなの無いはず
+			case 0x188:  type = CBUS_BOARD_SXM_F; break;
+			case 0x288:  type = CBUS_BOARD_WAVESTAR_0288H; break;// そんなの無いはず. A460判定で取られるはずだけど一応。
+			case 0x388:  type = CBUS_BOARD_UNKNOWN; break;// そんなの無いはず
 			}
 		}else{ // 2203
 			switch(base){
 			case 0x088:  type = CBUS_BOARD_LITTLE_ORCHESTRA_0088H; break;
 			case 0x188:  type = CBUS_BOARD_26; break;
-			case 0x288:  type = CBUS_BOARD_UNKNOWN; // そんなの無いはず
-			case 0x388:  type = CBUS_BOARD_UNKNOWN; // そんなの無いはず
+			case 0x288:  type = CBUS_BOARD_UNKNOWN; break;// そんなの無いはず
+			case 0x388:  type = CBUS_BOARD_UNKNOWN; break;// そんなの無いはず
 			}
 		}
 		
