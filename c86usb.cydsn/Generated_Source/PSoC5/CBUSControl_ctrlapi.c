@@ -24,9 +24,9 @@ void CBUSControl_Stop(void)
 
 void CBUSControl_Write(uint16_t data)
 {
-	while((CBUSControl_STATUS_REG & CBUSControl_CMD_QUEUE_FULL) != 0u)
+	// バスアクセス待ち
+	while((CBUSControl_STATUS_REG & CBUSControl_BUS_BUSY) != 0u)
 	{
-		/* Command queue is full */
 	}
 	// ライト指示送る
 	CBUSControl_CMD_FIFO_REG = CBUSControl_COMMAND_WRITE;
@@ -38,10 +38,9 @@ void CBUSControl_Write(uint16_t data)
 
 uint16_t CBUSControl_Read()
 {
-	// コマンドキュー空き待ち
-	while((CBUSControl_STATUS_REG & CBUSControl_CMD_QUEUE_FULL) != 0u)
+	// バスアクセス待ち
+	while((CBUSControl_STATUS_REG & CBUSControl_BUS_BUSY) != 0u)
 	{
-		/* Command queue is full */
 	}
 	// リード指示送る
 	CBUSControl_CMD_FIFO_REG = CBUSControl_COMMAND_READ;
@@ -54,5 +53,12 @@ uint16_t CBUSControl_Read()
 	return ((((uint16) CBUSControl_DIN_MSB_DATA_REG) << 8u) | CBUSControl_DIN_LSB_DATA_REG);
 }
 
+void CBUSControl_BusyWait()
+{
+	// バスアクセス待ち
+	while((CBUSControl_STATUS_REG & CBUSControl_BUS_BUSY) != 0u)
+	{
+	}
+}
 
 /* [] END OF FILE */

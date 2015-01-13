@@ -14,7 +14,7 @@
   <block name="ChipWaitTimer6" BASE="0x0" SIZE="0x0" desc="" visible="true" />
   <block name="not_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
   <block name="DigitalReset" BASE="0x0" SIZE="0x0" desc="" visible="true">
-    <register name="DigitalReset_CONTROL_REG" address="0x40006579" bitWidth="8" desc="" />
+    <register name="DigitalReset_CONTROL_REG" address="0x40006473" bitWidth="8" desc="" />
   </block>
   <block name="DIPSW" BASE="0x0" SIZE="0x0" desc="" visible="true" />
   <block name="EEPROM" BASE="0x0" SIZE="0x0" desc="" visible="true" />
@@ -22,9 +22,9 @@
   <block name="Bootloadable_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
   <block name="SWReadClk" BASE="0x0" SIZE="0x0" desc="" visible="true" />
   <block name="DipSwReadReg" BASE="0x0" SIZE="0x0" desc="" visible="true">
-    <register name="DipSwReadReg_STATUS_REG" address="0x40006568" bitWidth="8" desc="" />
-    <register name="DipSwReadReg_MASK_REG" address="0x40006588" bitWidth="8" desc="" />
-    <register name="DipSwReadReg_STATUS_AUX_CTL_REG" address="0x40006598" bitWidth="8" desc="">
+    <register name="DipSwReadReg_STATUS_REG" address="0x40006569" bitWidth="8" desc="" />
+    <register name="DipSwReadReg_MASK_REG" address="0x40006589" bitWidth="8" desc="" />
+    <register name="DipSwReadReg_STATUS_AUX_CTL_REG" address="0x40006599" bitWidth="8" desc="">
       <field name="FIFO0" from="5" to="5" access="RW" resetVal="" desc="FIFO0 clear">
         <value name="ENABLED" value="1" desc="Enable counter" />
         <value name="DISABLED" value="0" desc="Disable counter" />
@@ -166,11 +166,11 @@
     <register name="USBFS_USB_CLK_EN" address="0x4000609D" bitWidth="8" desc="USB Block Clock Enable Register" />
   </block>
   <block name="CBusAddrRegH" BASE="0x0" SIZE="0x0" desc="" visible="true">
-    <register name="CBusAddrRegH_CONTROL_REG" address="0x4000647B" bitWidth="8" desc="" />
+    <register name="CBusAddrRegH_CONTROL_REG" address="0x40006472" bitWidth="8" desc="" />
   </block>
   <block name="CBUSControl" BASE="0x0" SIZE="0x0" desc="" visible="true" />
   <block name="CBusAddrRegL" BASE="0x0" SIZE="0x0" desc="" visible="true">
-    <register name="CBusAddrRegL_CONTROL_REG" address="0x4000647E" bitWidth="8" desc="" />
+    <register name="CBusAddrRegL_CONTROL_REG" address="0x4000647D" bitWidth="8" desc="" />
   </block>
   <block name="timer_clock" BASE="0x0" SIZE="0x0" desc="" visible="true" />
   <block name="TickTimer" BASE="0x0" SIZE="0x0" desc="" visible="true">
@@ -231,7 +231,7 @@
     <register name="TickTimer_COUNTER" address="0x40004F06" bitWidth="16" desc="TMRx.CNT_CMP0 - Current Down Counter Value" />
   </block>
   <block name="CBusAddrRegU" BASE="0x0" SIZE="0x0" desc="" visible="true">
-    <register name="CBusAddrRegU_CONTROL_REG" address="0x40006476" bitWidth="8" desc="" />
+    <register name="CBusAddrRegU_CONTROL_REG" address="0x40006475" bitWidth="8" desc="" />
   </block>
   <block name="CBUS_ADDR_H" BASE="0x0" SIZE="0x0" desc="" visible="true" />
   <block name="Rx_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
@@ -239,11 +239,10 @@
     <block name="IntClock" BASE="0x0" SIZE="0x0" desc="" visible="true" />
     <block name="VirtualMux_1" BASE="0x0" SIZE="0x0" desc="" visible="true" />
     <block name="BUART" BASE="0x0" SIZE="0x0" desc="" visible="true" />
-    <register name="RX_UART_1_RX_ADDRESS1" address="0x4000642F" bitWidth="8" desc="RX Address1 Register" />
-    <register name="RX_UART_1_RX_ADDRESS2" address="0x4000643F" bitWidth="8" desc="RX Address2 Register" />
-    <register name="TX_UART_1_TX_DATA" address="0x40006440" bitWidth="8" desc="TX Data Register" />
-    <register name="RX_UART_1_RX_DATA" address="0x4000644F" bitWidth="8" desc="RX Data Register" />
-    <register name="RX_UART_1_RX_STATUS" address="0x40006460" bitWidth="8" desc="RX status register">
+    <register name="RX_UART_1_RX_ADDRESS1" address="0x4000642B" bitWidth="8" desc="RX Address1 Register" />
+    <register name="RX_UART_1_RX_ADDRESS2" address="0x4000643B" bitWidth="8" desc="RX Address2 Register" />
+    <register name="RX_UART_1_RX_DATA" address="0x4000644B" bitWidth="8" desc="RX Data Register" />
+    <register name="RX_UART_1_RX_STATUS" address="0x40006464" bitWidth="8" desc="RX status register">
       <field name="UART_1_RX_STS_MRKSPC" from="0" to="0" access="R" resetVal="" desc="" />
       <field name="UART_1_RX_STS_BREAK" from="1" to="1" access="R" resetVal="" desc="" />
       <field name="UART_1_RX_STS_PAR_ERROR" from="2" to="2" access="R" resetVal="" desc="" />
@@ -252,7 +251,8 @@
       <field name="UART_1_RX_STS_FIFO_NOTEMPTY" from="5" to="5" access="R" resetVal="" desc="" />
       <field name="UART_1_RX_STS_ADDR_MATCH" from="6" to="6" access="R" resetVal="" desc="" />
     </register>
-    <register name="TX_UART_1_TX_STATUS" address="0x40006461" bitWidth="8" desc="TX status register">
+    <register name="TX_UART_1_TX_DATA" address="0x40006544" bitWidth="8" desc="TX Data Register" />
+    <register name="TX_UART_1_TX_STATUS" address="0x40006564" bitWidth="8" desc="TX status register">
       <field name="UART_1_TX_STS_COMPLETE" from="0" to="0" access="R" resetVal="" desc="" />
       <field name="UART_1_TX_STS_FIFO_EMPTY" from="1" to="1" access="R" resetVal="" desc="" />
       <field name="UART_1_TX_STS_FIFO_FULL" from="2" to="2" access="R" resetVal="" desc="" />
