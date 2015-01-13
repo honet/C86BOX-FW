@@ -308,7 +308,7 @@ void cbus_board_setup(void)
 				type = CBUS_BOARD_86_0288H;
 				break;
 			case SOUND_73_018X:
-				type = CBUS_BOARD_73_0288H;
+				type = CBUS_BOARD_73_0188H;
 				break;
 			case SOUND_73_028X:
 				type = CBUS_BOARD_73_0288H;
