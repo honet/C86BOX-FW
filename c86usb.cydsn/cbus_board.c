@@ -31,6 +31,8 @@ typedef enum {
 } SOUND_ID;
 
 CBUS_BOARD_INFO boards[NMAXBOARDS];
+static uint8_t has_lowbit_decoder_board = 0;
+static uint8_t locked_base_addr[4] = {0};
 
 // ------------------------------------
 // function declaration
@@ -164,7 +166,7 @@ void cbus_board_init(uint8_t slot)
 }
 
 // ---------------------------------------
-// NOTE: ウエイト値確定前のチェック時用
+// NOTE: ウエイト値確定前のチェック時用: ウエイトたっぷり
 static void chip_write(int bidx, uint16_t aport, uint16_t dport, uint8_t addr, uint8_t data)
 {
 	cbus_write(bidx, aport, addr); // I/O
@@ -182,47 +184,95 @@ static uint8_t chip_read(int bidx, uint16_t aport, uint16_t dport, uint8_t addr)
 	return x&0xff;
 }
 
+static uint8_t check_have26func(int idx, uint16_t base)
+{
+	// is 26K ?? ---------------------
+	// SSG FineTune にテストパタンを読み書きしてみて、レジスタが存在してたら26Kと判定。
+	chip_write(idx, base+0, base+2, 0x7, 0x7f); // I/O=IN, SSG DISABLE
+
+	chip_write(idx, base+0, base+2, 0x00, 0xa5 );  // CH.A FineTune, pattern=0xa5
+	chip_write(idx, base+0, base+2, 0x02, 0x5a );  // CH.B FineTune, pattern=0x5a
+	chip_write(idx, base+0, base+2, 0x04, 0x26 );  // CH.C FineTune, pattern=0x26
+
+	if (0xa5 != chip_read(idx, base+0, base+2, 0x00)) // CH.A FineTune
+		return 0;
+	if (0x5a != chip_read(idx, base+0, base+2, 0x02)) // CH.B FineTune
+		return 0;
+	if (0x26 != chip_read(idx, base+0, base+2, 0x04)) // CH.C FineTune
+		return 0;
+
+	return 1;
+}
+
+
 // ボード自動検出
 static uint32_t auto_detect(int idx)
 {
 	uint32_t type = CBUS_BOARD_UNKNOWN;
+	uint16_t base=0x88;
 
-	// is 26K ?? ---------------------
-	// SSG FineTune にテストパタンを読み書きしてみて、レジスタが存在してたら26Kと判定。
-	chip_write(idx, 0x188, 0x18a, 0x7, 0x7f); // I/O=IN, SSG DISABLE
+	for( int i=0; i<4; i++, base+=0x100){
+		if(has_lowbit_decoder_board && locked_base_addr[i])
+			continue;
+		
+		// is 26K ?? ---------------------
+		if(!check_have26func(idx, base))
+			continue;
 
-	chip_write(idx, 0x188, 0x18a, 0x00, 0xa5 );  // CH.A FineTune, pattern=0xa5
-	chip_write(idx, 0x188, 0x18a, 0x02, 0x5a );  // CH.B FineTune, pattern=0x5a
-	chip_write(idx, 0x188, 0x18a, 0x04, 0x26 );  // CH.C FineTune, pattern=0x26
+		// is 12bit decoder?
+		uint8_t lowbit_decoder_board = 1;
+		for(int i=0; i<16; i++){
+			if(!check_have26func(idx, base+(i<<12))){
+				lowbit_decoder_board = 0;
+				break;
+			}
+		}
+		if (lowbit_decoder_board){
+			locked_base_addr[i] = 1;
+			has_lowbit_decoder_board = 1;
+		}
 
-	if (0xa5 != chip_read(idx, 0x0188, 0x018a, 0x00)) // CH.A FineTune
-		return type;
-	if (0x5a != chip_read(idx, 0x188, 0x18a, 0x02)) // CH.B FineTune
-		return type;
-	if (0x26 != chip_read(idx, 0x188, 0x18a, 0x04)) // CH.C FineTune
-		return type;
+		// is YM2608 / YMF288?? -----------------------
+		// SpeakBoardとか0xa460非サポートな奴用
+		// NOTE: SpeakBoardはアドレスを12bitしかデコードしていないようだ。
 
-	type = CBUS_BOARD_26;
+		// YMF288 mode select
+		chip_write(idx, base+0, base+2, 0x20, 0x2 );  // bit0:STANDBY, bit1:YMF288 mode
 
-	// is YM2608 / YMF288?? -----------------------
-	// SpeakBoardとか0xa460非サポートな奴用
-    // NOTE: SpeakBoardはアドレスを12bitしかデコードしていないようだ。
+		// 0xff OPNA device-id
+		uint16_t chiptype = chip_read(idx, base+0, base+2, 0xff);
 
-	// YMF288 mode select 
-	chip_write(idx, 0x188, 0x18a, 0x20, 0x2 );  // bit0:STANDBY, bit1:YMF288 mode
-	
-	// 0xff OPNA device-id
-	uint16_t chiptype = chip_read(idx, 0x188, 0x18a, 0xff);
-	
-	if (0x01==chiptype) // YM2608
-		return CBUS_BOARD_ASB01;
-	else if (0x02==chiptype) // YMF288
-		return CBUS_BOARD_SXM_F;
-	
-	// ここでADPCM-RAM判定したいが、
-	// ボード情報設定前なので boards が使えない。
-	
-	return CBUS_BOARD_26;
+		if (0x01==chiptype){ // YM2608
+			switch(base){
+			case 0x088:  type = CBUS_BOARD_ASB01_0088H; break;
+			case 0x188:  type = CBUS_BOARD_ASB01_0188H; break;
+			case 0x288:  type = CBUS_BOARD_ASB01_0288H; break;
+			case 0x388:  type = CBUS_BOARD_ASB01_0388H; break;
+			}
+		}else if (0x02==chiptype){ // YMF288
+			switch(base){
+			case 0x088:  type = CBUS_BOARD_UNKNOWN; // そんなの無いはず
+			case 0x188:  type = CBUS_BOARD_SXM_F;
+			case 0x288:  type = CBUS_BOARD_WAVESTAR_0288H; // そんなの無いはず. A460判定で取られるはずだけど一応。
+			case 0x388:  type = CBUS_BOARD_UNKNOWN; // そんなの無いはず
+			}
+		}else{ // 2203
+			switch(base){
+			case 0x088:  type = CBUS_BOARD_LITTLE_ORCHESTRA_0088H; break;
+			case 0x188:  type = CBUS_BOARD_26; break;
+			case 0x288:  type = CBUS_BOARD_UNKNOWN; // そんなの無いはず
+			case 0x388:  type = CBUS_BOARD_UNKNOWN; // そんなの無いはず
+			}
+		}
+		
+		// ここでADPCM-RAM判定したいが、
+		// ボード情報設定前なので boards が使えない。
+
+		// なんか見つかったらスキャン終了
+		if(type!=CBUS_BOARD_UNKNOWN)
+			break;
+	}
+	return type;
 }
 
 // ------------------------------------------
@@ -231,6 +281,11 @@ void cbus_board_setup(void)
 {
 	int timeridx = 0;
 	uint16_t d=0;
+
+	has_lowbit_decoder_board = 0;
+	for (int i=0; i<4; i++){
+		locked_base_addr[i] = 0;
+	}
 
 	// Cバスボード種別判定
 	for (int i=0; i<NMAXBOARDS; i++){

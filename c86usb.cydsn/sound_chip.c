@@ -72,13 +72,12 @@ void ym2203_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 	chip->wait_timerif->Set(waitcount);
 }
 
-
-
 // exaddr = [7:4]slot,[3:1]chip,[0:0]ex
 void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 {
 	uint8_t ex = exaddr&0x01;
 	uint16_t widx = ((uint16_t)ex<<8) | addr;
+	uint8_t slot = chip->slot;
 	uint8_t  waitidx;
 	uint16_t waitcount;
 
@@ -86,21 +85,24 @@ void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 	chip->wait_timerif->Wait();
 
 	if (ex==1 && addr==0x08){
+		uint32_t areg = chip->areg_addr[1];
+		uint32_t dreg = chip->dreg_addr[1];
+		
 		// ADPCMはウェイト無し
 		// write address
-		cbus_write(chip->slot, chip->areg_addr[ex], addr);
+		cbus_write(slot, areg, 0x08);
 		// write data
-		cbus_write(chip->slot, chip->dreg_addr[ex], data);
+		cbus_write(slot, dreg, data);
 		
 		// reset BRDY flag --------------
-		cbus_write(chip->slot, chip->areg_addr[1], OPNA_ADPCM_FLAG_REG);
-		cbus_write(chip->slot, chip->dreg_addr[1], 
+		cbus_write(slot, areg, OPNA_ADPCM_FLAG_REG);
+		cbus_write(slot, dreg,
 						OPNA_ADPCM_FLAG_BIT_MASK_ALL & ~OPNA_ADPCM_FLAG_BIT_MASK_EOS );
 		
 		// enable BRDY and EOS flag. ----
-		cbus_write(chip->slot, chip->dreg_addr[1], 
+		cbus_write(slot, dreg,
 						OPNA_ADPCM_FLAG_BIT_MASK_ALL &
-						~( OPNA_ADPCM_FLAG_BIT_MASK_BRDV |
+						~( OPNA_ADPCM_FLAG_BIT_MASK_BRDY |
 						   OPNA_ADPCM_FLAG_BIT_MASK_EOS ) );
 
 		// status check.
@@ -121,7 +123,7 @@ void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 		}
 
 		// write address ------------
-		cbus_write(chip->slot, chip->areg_addr[ex], addr);
+		cbus_write(slot, chip->areg_addr[ex], addr);
 		// set a after wait timer
 		waitidx = chip->waitidx[widx];
 		waitcount = chip->waitdef[waitidx&0x0f];
@@ -130,12 +132,13 @@ void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 		chip->wait_timerif->Wait();
 
 		// write data --------------
-		cbus_write(chip->slot, chip->dreg_addr[ex], data);
+		cbus_write(slot, chip->dreg_addr[ex], data);
 		// set a after wait timer
 		waitcount = chip->waitdef[(waitidx>>4)&0x0f];
 		chip->wait_timerif->Set(waitcount);
 	}
 }
+
 
 uint8_t ym2608_read(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr)
 {
@@ -251,8 +254,7 @@ void ym2608_init(CHIP_INFO *chip)
 void ym2608_write_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t size)
 {
 	uint32_t i, num = ((uint32_t)size)<<5;
-	uint16_t high, low, stop, limit, retry;
-	uint8_t status;
+	uint16_t high, low, stop, limit;
 	
 	stop = addr + size - 1;
 	limit = stop;
@@ -265,7 +267,7 @@ void ym2608_write_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t 
 	// Enable BRDY and EOS flag
 	ym2608_write(chip, 1, OPNA_ADPCM_FLAG_REG,
 					OPNA_ADPCM_FLAG_BIT_MASK_ALL &
-					~( OPNA_ADPCM_FLAG_BIT_MASK_BRDV |
+					~( OPNA_ADPCM_FLAG_BIT_MASK_BRDY |
 					   OPNA_ADPCM_FLAG_BIT_MASK_EOS ) );
 
 	// IRQ flag reset.
@@ -303,26 +305,8 @@ void ym2608_write_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t 
 	for( i=0; i<num; i++ ){
 		// data write
 		ym2608_write(chip, 1, OPNA_ADPCM_DATA_REG, *data++ );
-
-		// reset BRDY flag
-		ym2608_write(chip, 1, OPNA_ADPCM_FLAG_REG,
-						OPNA_ADPCM_FLAG_BIT_MASK_ALL & ~OPNA_ADPCM_FLAG_BIT_MASK_EOS );
 		
-		// enable BRDY and EOS flag.
-		ym2608_write(chip, 1, OPNA_ADPCM_FLAG_REG,
-						OPNA_ADPCM_FLAG_BIT_MASK_ALL &
-						~( OPNA_ADPCM_FLAG_BIT_MASK_BRDV |
-						   OPNA_ADPCM_FLAG_BIT_MASK_EOS ) );
-
-		// status check.
-		for( retry = 0; retry<100; retry++ ){
-			status = ym2608_read_status( chip, 1 );
-			if( status & OPNA_STATUS_BIT_BRDY )
-				break;
-		}
-
-		if( status & OPNA_STATUS_BIT_EOS )
-			break;
+		// BRDY待ちはym2608_write内で行っているので不要。
 	}
 
 	// finalize
@@ -335,7 +319,7 @@ void ym2608_read_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t s
 {
 	uint32_t i, num;
 	uint16_t high, low, stop, limit, retry;
-	uint8_t status=0, dummy;
+	volatile uint8_t status=0, dummy;
 
 	num = (size<<5) + 2; // dummy read *2
 	stop = addr + size - 1;
@@ -349,7 +333,7 @@ void ym2608_read_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t s
 	// Enable BRDY and EOS flag
 	ym2608_write(chip, 1, OPNA_ADPCM_FLAG_REG,
 					OPNA_ADPCM_FLAG_BIT_MASK_ALL &
-					~( OPNA_ADPCM_FLAG_BIT_MASK_BRDV |
+					~( OPNA_ADPCM_FLAG_BIT_MASK_BRDY |
 					   OPNA_ADPCM_FLAG_BIT_MASK_EOS ) );
 
 	// IRQ flag reset.
@@ -398,7 +382,7 @@ void ym2608_read_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t s
 		// enable BRDY and EOS flag.
 		ym2608_write(chip, 1, OPNA_ADPCM_FLAG_REG,
 						OPNA_ADPCM_FLAG_BIT_MASK_ALL &
-						~( OPNA_ADPCM_FLAG_BIT_MASK_BRDV |
+						~( OPNA_ADPCM_FLAG_BIT_MASK_BRDY |
 						   OPNA_ADPCM_FLAG_BIT_MASK_EOS ) );
 
 		// status check.
@@ -408,11 +392,11 @@ void ym2608_read_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t s
 				status = ym2608_read_status( chip, 1 );
 				if( status & OPNA_STATUS_BIT_BRDY )
 					break;
-			}
-		}
+            }
+        }
 
 		if( status & OPNA_STATUS_BIT_EOS )
-			break;
+			break;        
 	}
 
 	// finalize
@@ -435,6 +419,9 @@ uint8_t ym2608_check_adpcm(CHIP_INFO *chip)
 	ym2608_write_adpcm( chip, 0, pattern, n>>5 );
 	ym2608_read_adpcm( chip, 0, tmp, n>>5 );
 	
+	ym2608_write_adpcm( chip, 0, pattern, n>>5 );
+	ym2608_read_adpcm( chip, 0, tmp, n>>5 );
+    
 	for( i=0; i<n; i++ ){
 		if( tmp[i] != pattern[i] ){
 			flag = 0;
