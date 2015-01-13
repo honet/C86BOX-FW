@@ -3,6 +3,10 @@ Archive/
 Backup/
 c86usb.cydsn/codegentemp/
 c86usb.cydsn/CortexM3/
+c86usb.cydsn/Export/
+c86usb.cydsn/junk/
+c86usb.cydsn/**/__Previews/
+c86usb.cydsn/c86usb_timing.html
 *.bak
 *.rpt
 
