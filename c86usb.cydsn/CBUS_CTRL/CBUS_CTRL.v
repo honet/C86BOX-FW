@@ -82,26 +82,6 @@ cy_psoc3_udb_clock_enable_v1_0 #(.sync_mode(`TRUE)) ClkSync
 );
 
 
-// -----------------------------------------------------
-// ステータスレジスタ(CPU間通信用)
-/* Status register bit locations (bit 7-2 unused) */
-localparam CMD_FIFO_FULL   = 3'd0;    /* there is no room in the Cmd FIFO */
-localparam DATA_VALID      = 3'd1;    /* read data is valid */ 
-wire [7:0] status;
-
-wire full = ~(cmd_not_full & data_not_full);
-
-assign status[CMD_FIFO_FULL]   = full;           /* transparent */
-assign status[DATA_VALID]      = data_valid;     /* sticky      */
-assign status[7:2] = 6'd0;   /* unused bits */
-
-cy_psoc3_status #(.cy_force_order(1), .cy_md_select(8'h02)) StsReg
-(
-    /* input          */  .clock(op_clk),
-    /* input  [07:00] */  .status(status)
-);
-
-
 // ------------------------------------------------------
 // データバスリードクロック生成
 cy_psoc3_udb_clock_enable_v1_0 #(.sync_mode(`TRUE)) StsClkEn
@@ -218,6 +198,27 @@ begin
     end
 end
 
+
+// -----------------------------------------------------
+// ステータスレジスタ(CPU間通信用)
+/* Status register bit locations (bit 7-2 unused) */
+localparam BUS_BUSY        = 3'd0;    /* busy */
+localparam DATA_VALID      = 3'd1;    /* read data is valid */ 
+wire [7:0] status;
+
+wire busy = ~(state==STATE_IDLE);
+
+assign status[BUS_BUSY]   = busy;           /* transparent */
+assign status[DATA_VALID] = data_valid;     /* sticky      */
+assign status[7:2] = 6'd0;   /* unused bits */
+
+cy_psoc3_status #(.cy_force_order(1), .cy_md_select(8'h02)) StsReg
+(
+    /* input          */  .clock(op_clk),
+    /* input  [07:00] */  .status(status)
+);
+
+
 // -------------------------------------------
 // IO Read/Write 信号生成
 // Compute output signals. Change only on positive edge of clock
@@ -238,7 +239,8 @@ always @(posedge op_clk)
 begin
     oe <= (state == STATE_WRITE_SET_DATA |
            state == STATE_WRITE_RELOAD_LO_PULSE_COUNTER | state == STATE_WRITE_WAIT_LO_PULSE |
-           state == STATE_WRITE_WAIT_IORDY | state == STATE_WRITE_RELOAD_HI_PULSE_COUNTER | state == STATE_WRITE_WAIT_HI_PULSE);
+           state == STATE_WRITE_WAIT_IORDY | state == STATE_WRITE_RELOAD_HI_PULSE_COUNTER);
+//           | state == STATE_WRITE_WAIT_HI_PULSE);
 end
 
 // --------------------------------------------

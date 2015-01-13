@@ -31,6 +31,7 @@ void    `$INSTANCE_NAME`_Start(void);
 void    `$INSTANCE_NAME`_Stop(void);
 void    `$INSTANCE_NAME`_Write(uint16_t data);
 uint16_t `$INSTANCE_NAME`_Read();
+void     `$INSTANCE_NAME`_BusyWait();
 
 
 /***************************************
@@ -38,7 +39,7 @@ uint16_t `$INSTANCE_NAME`_Read();
 ***************************************/
 
 // STATUS_REG のフラグ
-#define `$INSTANCE_NAME`_CMD_QUEUE_FULL           (0x01u)
+#define `$INSTANCE_NAME`_BUS_BUSY                 (0x01u)
 #define `$INSTANCE_NAME`_DATA_VALID               (0x02u)
 
 // CMD_FIFO_REG のフラグ

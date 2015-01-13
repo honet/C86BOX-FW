@@ -54,12 +54,14 @@ void cbus_reset(void)
 
 void cbus_write(uint8_t slot, uint32_t addr, uint16_t data)
 {
+	CBUSControl_BusyWait();
 	CBUS_SetAddr(slot, addr);
 	CBUSControl_Write(data);
 }
 
 uint16_t cbus_read(uint8_t slot, uint32_t addr)
 {
+	CBUSControl_BusyWait();
 	CBUS_SetAddr(slot, addr);
 	return CBUSControl_Read();
 }

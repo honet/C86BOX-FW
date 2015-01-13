@@ -24,9 +24,9 @@ void `$INSTANCE_NAME`_Stop(void)
 
 void `$INSTANCE_NAME`_Write(uint16_t data)
 {
-	while((`$INSTANCE_NAME`_STATUS_REG & `$INSTANCE_NAME`_CMD_QUEUE_FULL) != 0u)
+	// バスアクセス待ち
+	while((`$INSTANCE_NAME`_STATUS_REG & `$INSTANCE_NAME`_BUS_BUSY) != 0u)
 	{
-		/* Command queue is full */
 	}
 	// ライト指示送る
 	`$INSTANCE_NAME`_CMD_FIFO_REG = `$INSTANCE_NAME`_COMMAND_WRITE;
@@ -38,10 +38,9 @@ void `$INSTANCE_NAME`_Write(uint16_t data)
 
 uint16_t `$INSTANCE_NAME`_Read()
 {
-	// コマンドキュー空き待ち
-	while((`$INSTANCE_NAME`_STATUS_REG & `$INSTANCE_NAME`_CMD_QUEUE_FULL) != 0u)
+	// バスアクセス待ち
+	while((`$INSTANCE_NAME`_STATUS_REG & `$INSTANCE_NAME`_BUS_BUSY) != 0u)
 	{
-		/* Command queue is full */
 	}
 	// リード指示送る
 	`$INSTANCE_NAME`_CMD_FIFO_REG = `$INSTANCE_NAME`_COMMAND_READ;
@@ -54,5 +53,12 @@ uint16_t `$INSTANCE_NAME`_Read()
 	return ((((uint16) `$INSTANCE_NAME`_DIN_MSB_DATA_REG) << 8u) | `$INSTANCE_NAME`_DIN_LSB_DATA_REG);
 }
 
+void `$INSTANCE_NAME`_BusyWait()
+{
+	// バスアクセス待ち
+	while((`$INSTANCE_NAME`_STATUS_REG & `$INSTANCE_NAME`_BUS_BUSY) != 0u)
+	{
+	}
+}
 
 /* [] END OF FILE */
