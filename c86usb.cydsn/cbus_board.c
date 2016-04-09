@@ -220,6 +220,8 @@ static uint32_t auto_detect(int idx)
 			continue;
 
 		// is 12bit decoder?
+        // bit[15:12]を変えながら（下位12bitは同じ）SSGレジスタを読み書きしてみて、
+        // レジスタが存在してたらアドレスデコーダが12bitしか無いと判定する
 		uint8_t lowbit_decoder_board = 1;
 		for(int i=0; i<16; i++){
 			if(!check_have26func(idx, base+(i<<12))){
