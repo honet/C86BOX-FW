@@ -9,4 +9,6 @@ c86usb.cydsn/**/__Previews/
 c86usb.cydsn/c86usb_timing.html
 *.bak
 *.rpt
-
+*.cywrk.*
+*.cyprj.*
+*~
