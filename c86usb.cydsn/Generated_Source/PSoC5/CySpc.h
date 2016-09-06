@@ -1,14 +1,14 @@
-/*******************************************************************************
-* File Name: CySpc.c
-* Version 4.11
+/***************************************************************************//**
+* \file CySpc.c
+* \version 5.40
 *
-* Description:
-*  Provides definitions for the System Performance Component API.
+* \brief Provides definitions for the System Performance Component API.
 *  The SPC functions are not meant to be called directly by the user
 *  application.
 *
 ********************************************************************************
-* Copyright 2008-2014, Cypress Semiconductor Corporation.  All rights reserved.
+* \copyright
+* Copyright 2008-2016, Cypress Semiconductor Corporation.  All rights reserved.
 * You may use this file only in accordance with the license, terms, conditions,
 * disclaimers, and limitations in the end user license agreement accompanying
 * the software package with which this file was provided.
@@ -37,10 +37,13 @@ uint8    CySpcReadData(uint8 buffer[], uint8 size);
 cystatus CySpcLoadMultiByte(uint8 array, uint16 address, const uint8 buffer[], uint8 size)\
 ;
 cystatus CySpcLoadRow(uint8 array, const uint8 buffer[], uint16 size);
+cystatus CySpcLoadRowFull(uint8 array, uint16 row, const uint8 buffer[], uint16 size)\
+;
 cystatus CySpcWriteRow(uint8 array, uint16 address, uint8 tempPolarity, uint8 tempMagnitude)\
 ;
 cystatus CySpcEraseSector(uint8 array, uint8 sectorNumber);
 cystatus CySpcGetTemp(uint8 numSamples);
+cystatus CySpcGetAlgorithm(void);
 cystatus CySpcLock(void);
 void     CySpcUnlock(void);
 

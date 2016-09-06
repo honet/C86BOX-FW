@@ -13,10 +13,11 @@
 <v>Output</v>
 </TreeKeys>
 <TreeStates>
-<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="c86usb\c86usb\c86usb.cydwr">
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="c86usb\c86usb">
 <ExpandedNodeIds>
 <v>c86usb</v>
 <v>c86usb\c86usb</v>
+<v>c86usb\c86usb\TopDesign</v>
 <v>c86usb\c86usb\c86usb.cydwr</v>
 <v>c86usb\c86usb\Header Files</v>
 <v>c86usb\c86usb\Header Files\cbus.h</v>
@@ -49,12 +50,15 @@
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegH</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegH\CBusAddrRegH.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegH\CBusAddrRegH.h</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegH\CBusAddrRegH_PM.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegL</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegL\CBusAddrRegL.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegL\CBusAddrRegL.h</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegL\CBusAddrRegL_PM.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegU</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegU\CBusAddrRegU.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegU\CBusAddrRegU.h</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegU\CBusAddrRegU_PM.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBUSControl</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBUSControl\CBUSControl_ctrlapi.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBUSControl\CBUSControl_ctrlapi.h</v>
@@ -87,6 +91,8 @@
 <v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\Cm3Iar.icf</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\Cm3RealView.scat</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\Cm3Start.c</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\cmsis_armcc.h</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\cmsis_gcc.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\core_cm3.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\core_cm3_psoc5.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\core_cmFunc.h</v>
@@ -110,6 +116,7 @@
 <v>c86usb\c86usb\Generated_Source\PSoC5\DigitalReset</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\DigitalReset\DigitalReset.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\DigitalReset\DigitalReset.h</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\DigitalReset\DigitalReset_PM.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\DIPSW</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\DIPSW\DIPSW_aliases.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\DipSwReadReg</v>
@@ -121,6 +128,7 @@
 <v>c86usb\c86usb\Generated_Source\PSoC5\LEDControl</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\LEDControl\LEDControl.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\LEDControl\LEDControl.h</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\LEDControl\LEDControl_PM.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\TickTimer</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\TickTimer\TickTimer.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\TickTimer\TickTimer.h</v>
@@ -150,6 +158,7 @@
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_cdc.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_cdc.inf</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_cls.c</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_cydmac.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_descr.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_drv.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_episr.c</v>
@@ -157,6 +166,8 @@
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_hid.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_midi.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_midi.h</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_msc.c</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_msc.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_pm.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_pvt.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\USBFS\USBFS_std.c</v>
@@ -174,6 +185,9 @@
 <v>c86usb\c86usb\Generated_Source\PSoC5\WAITCLK\WAITCLK.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cybootloader.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cybootloader.icf</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\cycodeshareexport.ld</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\cycodeshareimport.ld</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\cycodeshareimport.scat</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cydevice.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cydevice_trm.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cydevicegnu.inc</v>
@@ -195,7 +209,7 @@
 <VisibleNodeIds>
 <v>c86usb</v>
 <v>c86usb\c86usb</v>
-<v>c86usb\c86usb\TopDesign.cysch</v>
+<v>c86usb\c86usb\TopDesign</v>
 <v>c86usb\c86usb\c86usb.cydwr</v>
 <v>c86usb\c86usb\Header Files</v>
 <v>c86usb\c86usb\Header Files\cbus.h</v>
@@ -228,12 +242,15 @@
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegH</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegH\CBusAddrRegH.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegH\CBusAddrRegH.h</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegH\CBusAddrRegH_PM.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegL</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegL\CBusAddrRegL.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegL\CBusAddrRegL.h</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegL\CBusAddrRegL_PM.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegU</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegU\CBusAddrRegU.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegU\CBusAddrRegU.h</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\CBusAddrRegU\CBusAddrRegU_PM.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBUSControl</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBUSControl\CBUSControl_ctrlapi.c</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\CBUSControl\CBUSControl_ctrlapi.h</v>
@@ -266,15 +283,12 @@
 <v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\Cm3Iar.icf</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\Cm3RealView.scat</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\Cm3Start.c</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\cmsis_armcc.h</v>
+<v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\cmsis_gcc.h</v>
 <v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\core_cm3.h</v>
-<v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\core_cm3_psoc5.h</v>
-<v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\core_cmFunc.h</v>
-<v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\core_cmInstr.h</v>
-<v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\CyBootAsmGnu.s</v>
-<v>c86usb\c86usb\Generated_Source\PSoC5\cy_boot\CyBootAsmIar.s</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
-<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="c86usb\c86usb">
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="c86usb\c86usb\CBUS_CTRL\CBUS_CTRL.cysym">
 <ExpandedNodeIds>
 <v>c86usb</v>
 <v>c86usb\c86usb</v>
@@ -317,143 +331,154 @@
 <v>c86usb</v>
 <v>c86usb\c86usb</v>
 <v>c86usb\c86usb\CortexM3</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\Bootloadable_1.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\BUSCLK.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cbus.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cbus_board.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CBUS_SCLK.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CBusAddrRegH.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CBusAddrRegL.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CBusAddrRegU.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CBUSControl_ctrlapi.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer0_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer1_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer2_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer3_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer4_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer5_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer6_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer7_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\Cm3Start.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CyBootAsmGnu.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cybootloader.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CyDmac.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cyfitter_cfg.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CyFlash.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CyLib.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cymetadata.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cyPm.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CySpc.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cyutils.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\DigitalReset.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\DipSwReadReg.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\EEPROM.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\eeprom_config.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\LEDControl.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\main.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\sound_chip.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\TickTimer.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\TickTimer_PM.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\TickTimerISR.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\timer_clock.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\timer_if.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\UART_1.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\UART_1_BOOT.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\UART_1_INT.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\UART_1_IntClock.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\UART_1_PM.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\usb_vendor_request.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_audio.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_boot.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_cdc.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_cls.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_descr.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_Dm.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_Dp.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_drv.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_episr.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_hid.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_midi.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_pm.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_std.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_vnd.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\WAITCLK.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\c86usb.cyacd</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\c86usb.elf</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\c86usb.hex</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\c86usb.map</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\Bootloadable_1.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\BUSCLK.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\cbus.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\cbus_board.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\CBUS_SCLK.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\CBusAddrRegH.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\CBusAddrRegL.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\CBusAddrRegU.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\CBUSControl_ctrlapi.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\ChipWaitTimer0_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\ChipWaitTimer1_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\ChipWaitTimer2_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\ChipWaitTimer3_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\ChipWaitTimer4_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\ChipWaitTimer5_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\ChipWaitTimer6_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\ChipWaitTimer7_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\Cm3Start.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\CyBootAsmGnu.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\cybootloader.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\CyDmac.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\cyfitter_cfg.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\CyFlash.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\CyLib.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\cymetadata.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\cyPm.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\CySpc.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\cyutils.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\DigitalReset.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\DipSwReadReg.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\EEPROM.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\eeprom_config.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\LEDControl.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\main.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\sound_chip.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\TickTimer.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\TickTimer_PM.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\TickTimerISR.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\timer_clock.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\timer_if.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\UART_1.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\UART_1_BOOT.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\UART_1_INT.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\UART_1_IntClock.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\UART_1_PM.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\usb_vendor_request.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_audio.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_boot.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_cdc.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_cls.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_descr.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_Dm.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_Dp.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_drv.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_episr.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_hid.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_midi.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_pm.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_std.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\USBFS_vnd.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\WAITCLK.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\c86usb.cyacd</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\c86usb.elf</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\c86usb.hex</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\c86usb.map</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\BUSCLK.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cbus.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cbus_board.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBUS_SCLK.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegH.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegH_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegL.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegL_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegU.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegU_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBUSControl_ctrlapi.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer0_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer1_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer2_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer3_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer4_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer5_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer6_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer7_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\Cm3Start.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CyBootAsmGnu.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CyDmac.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cyfitter_cfg.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CyFlash.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CyLib.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cymetadata.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cyPm.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CySpc.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cyutils.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\DigitalReset.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\DigitalReset_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\DipSwReadReg.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\EEPROM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\eeprom_config.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\LEDControl.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\LEDControl_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\main.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\sound_chip.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\TickTimer.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\TickTimer_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\TickTimerISR.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\timer_clock.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\timer_if.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\UART_1.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\UART_1_BOOT.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\UART_1_INT.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\UART_1_IntClock.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\UART_1_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\usb_vendor_request.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_audio.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_boot.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_cdc.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_cls.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_descr.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_Dm.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_Dp.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_drv.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_episr.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_hid.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_midi.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_msc.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_pm.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_std.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_vnd.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\WAITCLK.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\c86usb.cyacd</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\c86usb.elf</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\c86usb.hex</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\c86usb.map</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\Bootloadable_1.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\BUSCLK.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\cbus.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\cbus_board.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CBUS_SCLK.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CBusAddrRegH.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CBusAddrRegH_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CBusAddrRegL.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CBusAddrRegL_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CBusAddrRegU.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CBusAddrRegU_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CBUSControl_ctrlapi.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\ChipWaitTimer0_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\ChipWaitTimer1_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\ChipWaitTimer2_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\ChipWaitTimer3_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\ChipWaitTimer4_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\ChipWaitTimer5_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\ChipWaitTimer6_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\ChipWaitTimer7_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\Cm3Start.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CyBootAsmGnu.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\cybootloader.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CyDmac.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\cyfitter_cfg.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CyFlash.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CyLib.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\cymetadata.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\cyPm.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\CySpc.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\cyutils.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\DigitalReset.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\DigitalReset_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\DipSwReadReg.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\EEPROM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\eeprom_config.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\LEDControl.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\LEDControl_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\main.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\sound_chip.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\TickTimer.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\TickTimer_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\TickTimerISR.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\timer_clock.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\timer_if.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\UART_1.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\UART_1_BOOT.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\UART_1_INT.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\UART_1_IntClock.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\UART_1_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\usb_vendor_request.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_audio.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_boot.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_cdc.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_cls.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_descr.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_Dm.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_Dp.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_drv.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_episr.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_hid.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_midi.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_msc.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_pm.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_std.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\USBFS_vnd.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\WAITCLK.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\c86usb.cyacd</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\c86usb.elf</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\c86usb.hex</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\c86usb.map</v>
+<v>c86usb\c86usb\c86usb.gpdsc</v>
 <v>c86usb\c86usb\c86usb.rpt</v>
 <v>c86usb\c86usb\c86usb_timing.html</v>
 </ExpandedNodeIds>
@@ -461,82 +486,82 @@
 <v>c86usb</v>
 <v>c86usb\c86usb</v>
 <v>c86usb\c86usb\CortexM3</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\Bootloadable_1.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\BUSCLK.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cbus.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cbus_board.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CBUS_SCLK.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CBusAddrRegH.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CBusAddrRegL.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CBusAddrRegU.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CBUSControl_ctrlapi.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer0_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer1_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer2_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer3_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer4_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer5_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer6_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\ChipWaitTimer7_api.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\Cm3Start.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CyBootAsmGnu.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cybootloader.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CyDmac.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cyfitter_cfg.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CyFlash.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CyLib.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cymetadata.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cyPm.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\CySpc.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\cyutils.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\DigitalReset.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\DipSwReadReg.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\EEPROM.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\eeprom_config.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\LEDControl.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\main.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\sound_chip.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\TickTimer.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\TickTimer_PM.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\TickTimerISR.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\timer_clock.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\timer_if.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\UART_1.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\UART_1_BOOT.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\UART_1_INT.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\UART_1_IntClock.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\UART_1_PM.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\usb_vendor_request.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_audio.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_boot.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_cdc.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_cls.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_descr.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_Dm.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_Dp.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_drv.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_episr.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_hid.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_midi.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_pm.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_std.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\USBFS_vnd.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\Listing Files\WAITCLK.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\c86usb.cyacd</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\c86usb.elf</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\c86usb.hex</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Debug\c86usb.map</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\Bootloadable_1.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\BUSCLK.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\cbus.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\cbus_board.lst</v>
-<v>c86usb\c86usb\CortexM3\ARM_GCC_473\Release\Listing Files\CBUS_SCLK.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\BUSCLK.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cbus.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cbus_board.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBUS_SCLK.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegH.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegH_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegL.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegL_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegU.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBusAddrRegU_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CBUSControl_ctrlapi.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer0_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer1_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer2_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer3_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer4_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer5_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer6_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\ChipWaitTimer7_api.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\Cm3Start.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CyBootAsmGnu.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CyDmac.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cyfitter_cfg.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CyFlash.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CyLib.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cymetadata.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cyPm.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\CySpc.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\cyutils.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\DigitalReset.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\DigitalReset_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\DipSwReadReg.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\EEPROM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\eeprom_config.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\LEDControl.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\LEDControl_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\main.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\sound_chip.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\TickTimer.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\TickTimer_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\TickTimerISR.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\timer_clock.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\timer_if.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\UART_1.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\UART_1_BOOT.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\UART_1_INT.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\UART_1_IntClock.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\UART_1_PM.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\usb_vendor_request.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_audio.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_boot.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_cdc.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_cls.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_descr.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_Dm.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_Dp.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_drv.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_episr.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_hid.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_midi.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_msc.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_pm.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_std.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\USBFS_vnd.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\Listing Files\WAITCLK.lst</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\c86usb.cyacd</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\c86usb.elf</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\c86usb.hex</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Debug\c86usb.map</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files</v>
+<v>c86usb\c86usb\CortexM3\ARM_GCC_493\Release\Listing Files\Bootloadable_1.lst</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 </TreeStates>
@@ -550,40 +575,50 @@
 <v>c86usb\c86usb</v>
 <v>c86usb\c86usb\PSoC 5 Architecture TRM</v>
 <v>c86usb\c86usb\CY8C52LP Family Datasheet</v>
-<v>c86usb\c86usb\System Reference Guide v4_11</v>
-<v>c86usb\c86usb\Bootloadable_v1_20</v>
+<v>c86usb\c86usb\System Reference Guides</v>
+<v>c86usb\c86usb\System Reference Guides\cy_boot_v5_40</v>
+<v>c86usb\c86usb\Bootloadable_v1_50.pdf</v>
 <v>c86usb\c86usb\cy_clock_v2_20</v>
-<v>c86usb\c86usb\cy_isr_v1_70</v>
-<v>c86usb\c86usb\cy_pins_v2_5</v>
-<v>c86usb\c86usb\CyControlReg_v1_70</v>
-<v>c86usb\c86usb\cydff_v1_30</v>
-<v>c86usb\c86usb\CyStatusReg_v1_80</v>
-<v>c86usb\c86usb\EEPROM_v2_10</v>
-<v>c86usb\c86usb\not_v1_0</v>
-<v>c86usb\c86usb\Timer_v2_60</v>
-<v>c86usb\c86usb\UART_v2_30</v>
-<v>c86usb\c86usb\USBFS_v2_70</v>
+<v>c86usb\c86usb\cy_clock_v2_20\cy_clock_v2_20.pdf</v>
+<v>c86usb\c86usb\cy_isr_v1_70.pdf</v>
+<v>c86usb\c86usb\cy_pins_v2_20</v>
+<v>c86usb\c86usb\cy_pins_v2_20\cy_pins_v2_20.pdf</v>
+<v>c86usb\c86usb\CyControlReg_v1_80</v>
+<v>c86usb\c86usb\CyControlReg_v1_80\CyControlReg_v1_80.pdf</v>
+<v>c86usb\c86usb\cydff_v1_30.pdf</v>
+<v>c86usb\c86usb\CyStatusReg_v1_90.pdf</v>
+<v>c86usb\c86usb\EEPROM_v3_0.pdf</v>
+<v>c86usb\c86usb\not_v1_0.pdf</v>
+<v>c86usb\c86usb\Timer_v2_70.pdf</v>
+<v>c86usb\c86usb\UART_v2_50.pdf</v>
+<v>c86usb\c86usb\USBFS_v3_0.pdf</v>
 <v>c86usb\c86usb\ZeroTerminal</v>
+<v>c86usb\c86usb\ZeroTerminal\ZeroTerminal.pdf</v>
 </ExpandedNodeIds>
 <VisibleNodeIds>
 <v>c86usb</v>
 <v>c86usb\c86usb</v>
 <v>c86usb\c86usb\PSoC 5 Architecture TRM</v>
 <v>c86usb\c86usb\CY8C52LP Family Datasheet</v>
-<v>c86usb\c86usb\System Reference Guide v4_11</v>
-<v>c86usb\c86usb\Bootloadable_v1_20</v>
+<v>c86usb\c86usb\System Reference Guides</v>
+<v>c86usb\c86usb\System Reference Guides\cy_boot_v5_40</v>
+<v>c86usb\c86usb\Bootloadable_v1_50.pdf</v>
 <v>c86usb\c86usb\cy_clock_v2_20</v>
-<v>c86usb\c86usb\cy_isr_v1_70</v>
-<v>c86usb\c86usb\cy_pins_v2_5</v>
-<v>c86usb\c86usb\CyControlReg_v1_70</v>
-<v>c86usb\c86usb\cydff_v1_30</v>
-<v>c86usb\c86usb\CyStatusReg_v1_80</v>
-<v>c86usb\c86usb\EEPROM_v2_10</v>
-<v>c86usb\c86usb\not_v1_0</v>
-<v>c86usb\c86usb\Timer_v2_60</v>
-<v>c86usb\c86usb\UART_v2_30</v>
-<v>c86usb\c86usb\USBFS_v2_70</v>
+<v>c86usb\c86usb\cy_clock_v2_20\cy_clock_v2_20.pdf</v>
+<v>c86usb\c86usb\cy_isr_v1_70.pdf</v>
+<v>c86usb\c86usb\cy_pins_v2_20</v>
+<v>c86usb\c86usb\cy_pins_v2_20\cy_pins_v2_20.pdf</v>
+<v>c86usb\c86usb\CyControlReg_v1_80</v>
+<v>c86usb\c86usb\CyControlReg_v1_80\CyControlReg_v1_80.pdf</v>
+<v>c86usb\c86usb\cydff_v1_30.pdf</v>
+<v>c86usb\c86usb\CyStatusReg_v1_90.pdf</v>
+<v>c86usb\c86usb\EEPROM_v3_0.pdf</v>
+<v>c86usb\c86usb\not_v1_0.pdf</v>
+<v>c86usb\c86usb\Timer_v2_70.pdf</v>
+<v>c86usb\c86usb\UART_v2_50.pdf</v>
+<v>c86usb\c86usb\USBFS_v3_0.pdf</v>
 <v>c86usb\c86usb\ZeroTerminal</v>
+<v>c86usb\c86usb\ZeroTerminal\ZeroTerminal.pdf</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 </TreeStatesV2>
@@ -597,27 +632,7 @@
 </userData>
 </CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997>
 <Unloaded />
-<OpenDocs>
-<name v=".\c86usb.cydsn\TopDesign\TopDesign.cysch" />
-<name v=".\c86usb.cydsn\main.c" />
-<name v=".\c86usb.cydsn\sound_chip.c" />
-<name v=".\c86usb.cydsn\CBUS_CTRL\CBUS_CTRL.v" />
-<name v=".\c86usb.cydsn\sound_chip.h" />
-<name v=".\c86usb.cydsn\cbus_board.c" />
-<name v=".\c86usb.cydsn\cbus_board.h" />
-<name v=".\c86usb.cydsn\cbus.h" />
-<name v=".\c86usb.cydsn\cbus.c" />
-<name v=".\c86usb.cydsn\Generated_Source\PSoC5\USBFS.h" />
-<name v=".\c86usb.cydsn\Generated_Source\PSoC5\USBFS.c" />
-<name v=".\c86usb.cydsn\CBUS_CTRL\API\ctrlapi.c" />
-<name v=".\c86usb.cydsn\Generated_Source\PSoC5\CyLib.c" />
-<name v=".\c86usb.cydsn\Generated_Source\PSoC5\cytypes.h" />
-<name v=".\c86usb.cydsn\Generated_Source\PSoC5\CyLib.h" />
-<name v=".\c86usb.cydsn\CBUS_CTRL\API\ctrlapi.h" />
-<name v=".\c86usb.cydsn\usb_vendor_request.h" />
-<name v=".\c86usb.cydsn\usb_vendor_request.c" />
-<name v=".\c86usb.cydsn\c86usb.cydwr" />
-</OpenDocs>
+<OpenDocs />
 <config v="Release" />
 <AutoUpdate v="true" />
 </CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>

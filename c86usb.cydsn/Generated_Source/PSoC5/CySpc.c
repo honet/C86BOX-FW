@@ -1,14 +1,14 @@
-/*******************************************************************************
-* File Name: CySpc.c
-* Version 4.11
+/***************************************************************************//**
+* \file CySpc.c
+* \version 5.40
 *
-*  Description:
-*   Provides an API for the System Performance Component.
-*   The SPC functions are not meant to be called directly by the user
-*   application.
+* \brief Provides an API for the System Performance Component.
+* The SPC functions are not meant to be called directly by the user
+* application.
 *
 ********************************************************************************
-* Copyright 2008-2014, Cypress Semiconductor Corporation.  All rights reserved.
+* \copyright
+* Copyright 2008-2016, Cypress Semiconductor Corporation.  All rights reserved.
 * You may use this file only in accordance with the license, terms, conditions,
 * disclaimers, and limitations in the end user license agreement accompanying
 * the software package with which this file was provided.
@@ -64,15 +64,8 @@ uint8 SpcLockState = CY_SPC_UNLOCKED;
 
 /*******************************************************************************
 * Function Name: CySpcStart
-********************************************************************************
-* Summary:
+****************************************************************************//**
 *  Starts the SPC.
-*
-* Parameters:
-*  None
-*
-* Return:
-*  None
 *
 *******************************************************************************/
 void CySpcStart(void) 
@@ -90,15 +83,8 @@ void CySpcStart(void)
 
 /*******************************************************************************
 * Function Name: CySpcStop
-********************************************************************************
-* Summary:
+****************************************************************************//**
 *  Stops the SPC.
-*
-* Parameters:
-*  None
-*
-* Return:
-*  None
 *
 *******************************************************************************/
 void CySpcStop(void) 
@@ -116,18 +102,16 @@ void CySpcStop(void)
 
 /*******************************************************************************
 * Function Name: CySpcReadData
-********************************************************************************
-* Summary:
+****************************************************************************//**
 *  Reads data from the SPC.
 *
-* Parameters:
-*  uint8 buffer:
+*  \param uint8 buffer:
 *   Address to store data read.
 *
-*  uint8 size:
+*  \param uint8 size:
 *   Number of bytes to read from the SPC.
 *
-* Return:
+* \return
 *  uint8:
 *   The number of bytes read from the SPC.
 *
@@ -151,24 +135,22 @@ uint8 CySpcReadData(uint8 buffer[], uint8 size)
 
 /*******************************************************************************
 * Function Name: CySpcLoadMultiByte
-********************************************************************************
-* Summary:
+****************************************************************************//**
 *  Loads 1 to 32 bytes of data into the row latch of a Flash/EEPROM array.
 *
-* Parameters:
-*  uint8 array:
+*  \param uint8 array:
 *   Id of the array.
 *
-*  uint16 address:
+*  \param uint16 address:
 *   Flash/eeprom addrress
 *
-*  uint8* buffer:
+*  \param uint8* buffer:
 *   Data to load to the row latch
 *
-*  uint16 number:
+*  \param uint16 number:
 *   Number bytes to load.
 *
-* Return:
+* \return
 *  CYRET_STARTED
 *  CYRET_CANCELED
 *  CYRET_LOCKED
@@ -227,24 +209,27 @@ cystatus CySpcLoadMultiByte(uint8 array, uint16 address, const uint8 buffer[], u
 
 /*******************************************************************************
 * Function Name: CySpcLoadRow
-********************************************************************************
-* Summary:
+****************************************************************************//**
 *  Loads a row of data into the row latch of a Flash/EEPROM array.
 *
-* Parameters:
-*  uint8 array:
+*  The buffer pointer should point to the data that should be written to the
+*  flash row directly (no data in ECC/flash will be preserved). It is Flash API
+*  responsibility to prepare data: the preserved data are copied from flash into
+*  array with the modified data.
+*
+*  \param uint8 array:
 *   Id of the array.
 *
-*  uint8* buffer:
+*  \param uint8* buffer:
 *   Data to be loaded to the row latch
 *
-*  uint8 size:
+*  \param uint8 size:
 *   The number of data bytes that the SPC expects to be written. Depends on the
 *   type of the array and, if the array is Flash, whether ECC is being enabled
 *   or not. There are following values: flash row latch size with ECC enabled,
 *   flash row latch size with ECC disabled and EEPROM row latch size.
 *
-* Return:
+* \return
 *  CYRET_STARTED
 *  CYRET_CANCELED
 *  CYRET_LOCKED
@@ -287,27 +272,166 @@ cystatus CySpcLoadRow(uint8 array, const uint8 buffer[], uint16 size)
 
 
 /*******************************************************************************
-* Function Name: CySpcWriteRow
-********************************************************************************
-* Summary:
-*  Erases then programs a row in Flash/EEPROM with data in row latch.
+* Function Name: CySpcLoadRowFull
+****************************************************************************//**
+*  Loads a row of data into the row latch of a Flash/EEPROM array.
 *
-* Parameters:
-*  uint8 array:
+*  The only data that are going to be changed should be passed. The function
+*  will handle unmodified data preservation based on DWR settings and input
+*  parameters.
+*
+*  \param uint8 array:
 *   Id of the array.
 *
-*  uint16 address:
+*  \param uint16 row:
+*   Flash row number to be loaded.
+*
+*  \param uint8* buffer:
+*   Data to be loaded to the row latch
+*
+*  \param uint8 size:
+*   The number of data bytes that the SPC expects to be written. Depends on the
+*   type of the array and, if the array is Flash, whether ECC is being enabled
+*   or not. There are following values: flash row latch size with ECC enabled,
+*   flash row latch size with ECC disabled and EEPROM row latch size.
+*
+* \return
+*  CYRET_STARTED
+*  CYRET_CANCELED
+*  CYRET_LOCKED
+*
+*******************************************************************************/
+cystatus CySpcLoadRowFull(uint8 array, uint16 row, const uint8 buffer[], uint16 size)\
+
+{
+    cystatus status = CYRET_STARTED;
+    uint16 i;
+
+    #if (CYDEV_ECC_ENABLE == 0)
+        uint32 offset;
+    #endif /* (CYDEV_ECC_ENABLE == 0) */
+
+    /* Make sure the SPC is ready to accept command */
+    if(CY_SPC_IDLE)
+    {
+        CY_SPC_CPU_DATA_REG = CY_SPC_KEY_ONE;
+        CY_SPC_CPU_DATA_REG = CY_SPC_KEY_TWO(CY_SPC_CMD_LD_ROW);
+        CY_SPC_CPU_DATA_REG = CY_SPC_CMD_LD_ROW;
+
+        /* Make sure the command was accepted */
+        if(CY_SPC_BUSY)
+        {
+            CY_SPC_CPU_DATA_REG = array;
+
+            /*******************************************************************
+            * If "Enable Error Correcting Code (ECC)" and "Store Configuration
+            * Data in ECC" DWR options are disabled, ECC section is available
+            * for user data.
+            *******************************************************************/
+            #if ((CYDEV_ECC_ENABLE == 0u) && (CYDEV_CONFIGURATION_ECC == 0u))
+
+                /*******************************************************************
+                * If size parameter equals size of the ECC row and selected array
+                * identification corresponds to the flash array (but not to EEPROM
+                * array) then data are going to be written to the ECC section.
+                * In this case flash data must be preserved. The flash data copied
+                * from flash data section to the SPC data register.
+                *******************************************************************/
+                if ((size == CYDEV_ECC_ROW_SIZE) && (array <= CY_SPC_LAST_FLASH_ARRAYID))
+                {
+                    offset = CYDEV_FLS_BASE +
+                             ((uint32) array * CYDEV_FLS_SECTOR_SIZE) +
+                             ((uint32)   row * CYDEV_FLS_ROW_SIZE   );
+
+                    for (i = 0u; i < CYDEV_FLS_ROW_SIZE; i++)
+                    {
+                        CY_SPC_CPU_DATA_REG = CY_GET_XTND_REG8((void CYFAR *)(offset + i));
+                    }
+                }
+
+            #endif /* ((CYDEV_ECC_ENABLE == 0u) && (CYDEV_CONFIGURATION_ECC == 0u)) */
+
+
+            for(i = 0u; i < size; i++)
+            {
+                CY_SPC_CPU_DATA_REG = buffer[i];
+            }
+
+
+            /*******************************************************************
+            * If "Enable Error Correcting Code (ECC)" DWR option is disabled,
+            * ECC section can be used for storing device configuration data
+            * ("Store Configuration Data in ECC" DWR option is enabled) or for
+            * storing user data in the ECC section ("Store Configuration Data in
+            * ECC" DWR option is enabled). In both cases, the data in the ECC
+            * section must be preserved if flash data is written.
+            *******************************************************************/
+            #if (CYDEV_ECC_ENABLE == 0)
+
+
+                /*******************************************************************
+                * If size parameter equals size of the flash row and selected array
+                * identification corresponds to the flash array (but not to EEPROM
+                * array) then data are going to be written to the flash data
+                * section. In this case, ECC section data must be preserved.
+                * The ECC section data copied from ECC section to the SPC data
+                * register.
+                *******************************************************************/
+                if ((size == CYDEV_FLS_ROW_SIZE) && (array <= CY_SPC_LAST_FLASH_ARRAYID))
+                {
+                    offset = CYDEV_ECC_BASE +
+                            ((uint32) array * CYDEV_ECC_SECTOR_SIZE) +
+                            ((uint32) row   * CYDEV_ECC_ROW_SIZE   );
+
+                    for (i = 0u; i < CYDEV_ECC_ROW_SIZE; i++)
+                    {
+                        CY_SPC_CPU_DATA_REG = CY_GET_XTND_REG8((void CYFAR *)(offset + i));
+                    }
+                }
+
+            #else
+
+                if(0u != row)
+                {
+                    /* To remove unreferenced local variable warning */
+                }
+
+            #endif /* (CYDEV_ECC_ENABLE == 0) */
+        }
+        else
+        {
+            status = CYRET_CANCELED;
+        }
+    }
+    else
+    {
+        status = CYRET_LOCKED;
+    }
+
+    return(status);
+}
+
+
+/*******************************************************************************
+* Function Name: CySpcWriteRow
+****************************************************************************//**
+*  Erases then programs a row in Flash/EEPROM with data in row latch.
+*
+*  \param uint8 array:
+*   Id of the array.
+*
+*  \param uint16 address:
 *   flash/eeprom addrress
 *
-*  uint8 tempPolarity:
+*  \param uint8 tempPolarity:
 *   temperature polarity.
-*   1: the Temp Magnitude is interpreted as a positive value
-*   0: the Temp Magnitude is interpreted as a negative value
+*   \param 1: the Temp Magnitude is interpreted as a positive value
+*   \param 0: the Temp Magnitude is interpreted as a negative value
 *
-*  uint8 tempMagnitude:
+*  \param uint8 tempMagnitude:
 *   temperature magnitude.
 *
-* Return:
+* \return
 *  CYRET_STARTED
 *  CYRET_CANCELED
 *  CYRET_LOCKED
@@ -350,18 +474,16 @@ cystatus CySpcWriteRow(uint8 array, uint16 address, uint8 tempPolarity, uint8 te
 
 /*******************************************************************************
 * Function Name: CySpcEraseSector
-********************************************************************************
-* Summary:
+****************************************************************************//**
 *  Erases all data in the addressed sector (block of 64 rows).
 *
-* Parameters:
-*  uint8 array:
+*  \param uint8 array:
 *   Id of the array.
 *
-*  uint8 sectorNumber:
+*  \param uint8 sectorNumber:
 *   Zero based sector number within Flash/EEPROM array
 *
-* Return:
+* \return
 *  CYRET_STARTED
 *  CYRET_CANCELED
 *  CYRET_LOCKED
@@ -400,23 +522,21 @@ cystatus CySpcEraseSector(uint8 array, uint8 sectorNumber)
 
 /*******************************************************************************
 * Function Name: CySpcGetTemp
-********************************************************************************
-* Summary:
+****************************************************************************//**
 *  Returns the internal die temperature
 *
-* Parameters:
-*  uint8 numSamples:
+*  \param uint8 numSamples:
 *   Number of samples. Valid values are 1-5, resulting in 2 - 32 samples
 *   respectively.
 *
-* uint16 timerPeriod:
+* \param uint16 timerPeriod:
 *   Number of ADC ACLK cycles. A valid 14 bit value is accepted, higher 2 bits
 *   of 16 bit values are ignored.
 *
-* uint8 clkDivSelect:
+* \param uint8 clkDivSelect:
 *   ADC ACLK clock divide value. Valid values are 2 - 225.
 *
-* Return:
+* \return
 *  CYRET_STARTED
 *  CYRET_CANCELED
 *  CYRET_LOCKED
@@ -454,15 +574,11 @@ cystatus CySpcGetTemp(uint8 numSamples)
 
 /*******************************************************************************
 * Function Name: CySpcLock
-********************************************************************************
-* Summary:
+****************************************************************************//**
 *  Locks the SPC so it can not be used by someone else:
 *   - Saves wait-pipeline enable state and enable pipeline (PSoC5)
 *
-* Parameters:
-*  Note
-*
-* Return:
+* \return
 *  CYRET_SUCCESS - if the resource was free.
 *  CYRET_LOCKED  - if the SPC is in use.
 *
@@ -507,16 +623,9 @@ cystatus CySpcLock(void)
 
 /*******************************************************************************
 * Function Name: CySpcUnlock
-********************************************************************************
-* Summary:
+****************************************************************************//**
 *  Unlocks the SPC so it can be used by someone else:
 *   - Restores wait-pipeline enable state (PSoC5)
-*
-* Parameters:
-*  None
-*
-* Return:
-*  None
 *
 *******************************************************************************/
 void CySpcUnlock(void)
@@ -551,4 +660,34 @@ void CySpcUnlock(void)
 }
 
 
+/*******************************************************************************
+* Function Name: CySpcGetAlgorithm
+****************************************************************************//**
+*  Downloads SPC algorithm from SPC SROM into SRAM.
+*
+* \return
+*  CYRET_STARTED
+*  CYRET_LOCKED
+*
+*******************************************************************************/
+cystatus CySpcGetAlgorithm(void)
+{
+    cystatus status = CYRET_STARTED;
+
+    /* Make sure the SPC is ready to accept command */
+    if(CY_SPC_IDLE)
+    {
+        CY_SPC_CPU_DATA_REG = CY_SPC_KEY_ONE;
+        CY_SPC_CPU_DATA_REG = CY_SPC_KEY_TWO(CY_SPC_CMD_DWNLD_ALGORITHM);
+        CY_SPC_CPU_DATA_REG = CY_SPC_CMD_DWNLD_ALGORITHM;
+    }
+    else
+    {
+        status = CYRET_LOCKED;
+    }
+
+    return(status);
+}
+
 /* [] END OF FILE */
+

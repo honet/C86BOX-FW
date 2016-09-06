@@ -1,6 +1,6 @@
 /*******************************************************************************
 * File Name: DipSwReadReg.c  
-* Version 1.80
+* Version 1.90
 *
 * Description:
 *  This file contains API to enable firmware to read the value of a Status 
@@ -9,7 +9,7 @@
 * Note:
 *
 ********************************************************************************
-* Copyright 2008-2012, Cypress Semiconductor Corporation.  All rights reserved.
+* Copyright 2008-2015, Cypress Semiconductor Corporation.  All rights reserved.
 * You may use this file only in accordance with the license, terms, conditions, 
 * disclaimers, and limitations in the end user license agreement accompanying 
 * the software package with which this file was provided.
@@ -103,7 +103,7 @@ void DipSwReadReg_InterruptDisable(void)
 void DipSwReadReg_WriteMask(uint8 mask) 
 {
     #if(DipSwReadReg_INPUTS < 8u)
-    	mask &= (uint8)((((uint8)1u) << DipSwReadReg_INPUTS) - 1u);
+    	mask &= ((uint8)(1u << DipSwReadReg_INPUTS) - 1u);
 	#endif /* End DipSwReadReg_INPUTS < 8u */
     DipSwReadReg_Status_Mask = mask;
 }

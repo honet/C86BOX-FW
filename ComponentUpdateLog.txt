@@ -1,0 +1,37 @@
+Last Modified Date & Time: 09/07/2016 01:22:31
+
+c86usb: TopDesign.cysch
+	CBUS_DATA_L [v2.20] to [v2.20]
+	CBUS_ADDR_L [v2.20] to [v2.20]
+	CBUS_ADDR_U [v2.20] to [v2.20]
+	CBUS_IOR [v2.20] to [v2.20]
+	CBUS_RESET [v2.20] to [v2.20]
+	CBUS_IOW [v2.20] to [v2.20]
+	CBUS_MRC [v2.20] to [v2.20]
+	CBUS_MWC [v2.20] to [v2.20]
+	CBUS_BHE [v2.20] to [v2.20]
+	CBUS_MWE [v2.20] to [v2.20]
+	CBUS_IORDY [v2.20] to [v2.20]
+	CBUS_SCLK [v2.20] to [v2.20]
+	LED [v2.20] to [v2.20]
+	Rx_1 [v2.20] to [v2.20]
+	Tx_1 [v2.20] to [v2.20]
+	CBUS_DATA_H [v2.20] to [v2.20]
+	CBUS_ADDR_H [v2.20] to [v2.20]
+	DIPSW [v2.20] to [v2.20]
+	USBFS [v3.0] to [v3.0]
+	UART_1 [v2.50] to [v2.50]
+	LEDControl [v1.80] to [v1.80]
+	CBusAddrRegL [v1.80] to [v1.80]
+	CBusAddrRegH [v1.80] to [v1.80]
+	CBusAddrRegU [v1.80] to [v1.80]
+	DigitalReset [v1.80] to [v1.80]
+	TickTimer [v2.70] to [v2.70]
+	EEPROM [v3.0] to [v3.0]
+	DipSwReadReg [v1.90] to [v1.90]
+	Bootloadable_1 [v1.50] to [v1.50]
+
+c86usb: c86usb.cydwr
+	cy_boot [v4.11] to [v5.40]
+
+

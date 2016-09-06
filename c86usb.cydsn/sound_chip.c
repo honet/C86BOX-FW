@@ -9,6 +9,7 @@ const uint16_t waitdef_2203_MC4[5] = { 100,120,150,200,1152 };
 
 // データシート通り（@8MHz値。本当は7.987MHzだけれど、誤差範囲なので気にしないことにする）
 const uint16_t waitdef_2608[5] = { 0, 17, 47, 83, 576 };
+// 上位4bit:アドレスライトウェイト  下位4bit:データライトウェイト
 const uint8_t waitidx_2608[512] = {
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 	0x41,0x31,0x31,0x31,0x31,0x31,0x31,0x31,0x31,0x31,0x31,0x31,0x31,0x31,0x00,0x00,
@@ -319,7 +320,7 @@ void ym2608_read_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t s
 {
 	uint32_t i, num;
 	uint16_t high, low, stop, limit, retry;
-	volatile uint8_t status=0, dummy;
+	volatile uint8_t status=0;
 
 	num = (size<<5) + 2; // dummy read *2
 	stop = addr + size - 1;
@@ -370,7 +371,7 @@ void ym2608_read_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t s
 		// data read
 		if( i<2 ){
 			// 最初の２回はダミーリード（バグだよねぇ、これ。）
-			dummy = ym2608_read( chip, 1, OPNA_ADPCM_DATA_REG );
+			volatile uint8_t dummy __attribute__((unused)) = ym2608_read( chip, 1, OPNA_ADPCM_DATA_REG );
 		}else{
 			*data++ = ym2608_read( chip, 1, OPNA_ADPCM_DATA_REG );
 		}

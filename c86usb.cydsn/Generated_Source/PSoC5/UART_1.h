@@ -1,6 +1,6 @@
 /*******************************************************************************
 * File Name: UART_1.h
-* Version 2.30
+* Version 2.50
 *
 * Description:
 *  Contains the function prototypes and constants available to the UART
@@ -9,7 +9,7 @@
 * Note:
 *
 ********************************************************************************
-* Copyright 2008-2012, Cypress Semiconductor Corporation.  All rights reserved.
+* Copyright 2008-2015, Cypress Semiconductor Corporation.  All rights reserved.
 * You may use this file only in accordance with the license, terms, conditions,
 * disclaimers, and limitations in the end user license agreement accompanying
 * the software package with which this file was provided.
@@ -45,16 +45,16 @@
 #define UART_1_USE23POLLING                   (1u)
 #define UART_1_FLOW_CONTROL                   (0u)
 #define UART_1_CLK_FREQ                       (0u)
-#define UART_1_TXBUFFERSIZE                   (4u)
-#define UART_1_RXBUFFERSIZE                   (4u)
+#define UART_1_TX_BUFFER_SIZE                 (4u)
+#define UART_1_RX_BUFFER_SIZE                 (4u)
 
 /* Check to see if required defines such as CY_PSOC5LP are available */
 /* They are defined starting with cy_boot v3.0 */
 #if !defined (CY_PSOC5LP)
-    #error Component UART_v2_30 requires cy_boot v3.0 or later
+    #error Component UART_v2_50 requires cy_boot v3.0 or later
 #endif /* (CY_PSOC5LP) */
 
-#ifdef UART_1_BUART_sCR_SyncCtl_CtrlReg__CONTROL_REG
+#if defined(UART_1_BUART_sCR_SyncCtl_CtrlReg__CONTROL_REG)
     #define UART_1_CONTROL_REG_REMOVED            (0u)
 #else
     #define UART_1_CONTROL_REG_REMOVED            (1u)
@@ -62,7 +62,7 @@
 
 
 /***************************************
-*      Data Struct Definition
+*      Data Structure Definition
 ***************************************/
 
 /* Sleep Mode API Support */
@@ -73,30 +73,7 @@ typedef struct UART_1_backupStruct_
     #if(UART_1_CONTROL_REG_REMOVED == 0u)
         uint8 cr;
     #endif /* End UART_1_CONTROL_REG_REMOVED */
-    #if( (UART_1_RX_ENABLED) || (UART_1_HD_ENABLED) )
-        uint8 rx_period;
-        #if (CY_UDB_V0)
-            uint8 rx_mask;
-            #if (UART_1_RXHW_ADDRESS_ENABLED)
-                uint8 rx_addr1;
-                uint8 rx_addr2;
-            #endif /* End UART_1_RXHW_ADDRESS_ENABLED */
-        #endif /* End CY_UDB_V0 */
-    #endif  /* End (UART_1_RX_ENABLED) || (UART_1_HD_ENABLED)*/
 
-    #if(UART_1_TX_ENABLED)
-        #if(UART_1_TXCLKGEN_DP)
-            uint8 tx_clk_ctr;
-            #if (CY_UDB_V0)
-                uint8 tx_clk_compl;
-            #endif  /* End CY_UDB_V0 */
-        #else
-            uint8 tx_period;
-        #endif /*End UART_1_TXCLKGEN_DP */
-        #if (CY_UDB_V0)
-            uint8 tx_mask;
-        #endif  /* End CY_UDB_V0 */
-    #endif /*End UART_1_TX_ENABLED */
 } UART_1_BACKUP_STRUCT;
 
 
@@ -119,9 +96,9 @@ void UART_1_Wakeup(void) ;
 /* Only if RX is enabled */
 #if( (UART_1_RX_ENABLED) || (UART_1_HD_ENABLED) )
 
-    #if(UART_1_RX_INTERRUPT_ENABLED)
-        void  UART_1_EnableRxInt(void) ;
-        void  UART_1_DisableRxInt(void) ;
+    #if (UART_1_RX_INTERRUPT_ENABLED)
+        #define UART_1_EnableRxInt()  CyIntEnable (UART_1_RX_VECT_NUM)
+        #define UART_1_DisableRxInt() CyIntDisable(UART_1_RX_VECT_NUM)
         CY_ISR_PROTO(UART_1_RXISR);
     #endif /* UART_1_RX_INTERRUPT_ENABLED */
 
@@ -148,8 +125,10 @@ void UART_1_Wakeup(void) ;
 #if(UART_1_TX_ENABLED || UART_1_HD_ENABLED)
 
     #if(UART_1_TX_INTERRUPT_ENABLED)
-        void UART_1_EnableTxInt(void) ;
-        void UART_1_DisableTxInt(void) ;
+        #define UART_1_EnableTxInt()  CyIntEnable (UART_1_TX_VECT_NUM)
+        #define UART_1_DisableTxInt() CyIntDisable(UART_1_TX_VECT_NUM)
+        #define UART_1_SetPendingTxInt() CyIntSetPending(UART_1_TX_VECT_NUM)
+        #define UART_1_ClearPendingTxInt() CyIntClearPending(UART_1_TX_VECT_NUM)
         CY_ISR_PROTO(UART_1_TXISR);
     #endif /* UART_1_TX_INTERRUPT_ENABLED */
 
@@ -201,6 +180,9 @@ void UART_1_Wakeup(void) ;
 
     /* Byte to Byte time out for detecting end of block data from host */
     #define UART_1_BYTE2BYTE_TIME_OUT (25u)
+    #define UART_1_PACKET_EOP         (0x17u) /* End of packet defined by bootloader */
+    #define UART_1_WAIT_EOP_DELAY     (5u)    /* Additional 5ms to wait for End of packet */
+    #define UART_1_BL_CHK_DELAY_MS    (1u)    /* Time Out quantity equal 1mS */
 
 #endif /* CYDEV_BOOTLOADER_IO_COMP */
 
@@ -209,8 +191,8 @@ void UART_1_Wakeup(void) ;
 *          API Constants
 ***************************************/
 /* Parameters for SetTxAddressMode API*/
-#define UART_1_SET_SPACE                              (0x00u)
-#define UART_1_SET_MARK                               (0x01u)
+#define UART_1_SET_SPACE      (0x00u)
+#define UART_1_SET_MARK       (0x01u)
 
 /* Status Register definitions */
 #if( (UART_1_TX_ENABLED) || (UART_1_HD_ENABLED) )
@@ -218,18 +200,16 @@ void UART_1_Wakeup(void) ;
         #define UART_1_TX_VECT_NUM            (uint8)UART_1_TXInternalInterrupt__INTC_NUMBER
         #define UART_1_TX_PRIOR_NUM           (uint8)UART_1_TXInternalInterrupt__INTC_PRIOR_NUM
     #endif /* UART_1_TX_INTERRUPT_ENABLED */
+
+    #define UART_1_TX_STS_COMPLETE_SHIFT          (0x00u)
+    #define UART_1_TX_STS_FIFO_EMPTY_SHIFT        (0x01u)
+    #define UART_1_TX_STS_FIFO_NOT_FULL_SHIFT     (0x03u)
     #if(UART_1_TX_ENABLED)
-        #define UART_1_TX_STS_COMPLETE_SHIFT          (0x00u)
-        #define UART_1_TX_STS_FIFO_EMPTY_SHIFT        (0x01u)
-        #define UART_1_TX_STS_FIFO_FULL_SHIFT         (0x02u)
-        #define UART_1_TX_STS_FIFO_NOT_FULL_SHIFT     (0x03u)
-    #endif /* UART_1_TX_ENABLED */
-    #if(UART_1_HD_ENABLED)
-        #define UART_1_TX_STS_COMPLETE_SHIFT          (0x00u)
-        #define UART_1_TX_STS_FIFO_EMPTY_SHIFT        (0x01u)
-        #define UART_1_TX_STS_FIFO_FULL_SHIFT         (0x05u)  /*needs MD=0*/
-        #define UART_1_TX_STS_FIFO_NOT_FULL_SHIFT     (0x03u)
-    #endif /* UART_1_HD_ENABLED */
+        #define UART_1_TX_STS_FIFO_FULL_SHIFT     (0x02u)
+    #else /* (UART_1_HD_ENABLED) */
+        #define UART_1_TX_STS_FIFO_FULL_SHIFT     (0x05u)  /* Needs MD=0 */
+    #endif /* (UART_1_TX_ENABLED) */
+
     #define UART_1_TX_STS_COMPLETE            (uint8)(0x01u << UART_1_TX_STS_COMPLETE_SHIFT)
     #define UART_1_TX_STS_FIFO_EMPTY          (uint8)(0x01u << UART_1_TX_STS_FIFO_EMPTY_SHIFT)
     #define UART_1_TX_STS_FIFO_FULL           (uint8)(0x01u << UART_1_TX_STS_FIFO_FULL_SHIFT)
@@ -292,15 +272,15 @@ void UART_1_Wakeup(void) ;
 #define UART_1_OVER_SAMPLE_8                      (8u)
 #define UART_1_OVER_SAMPLE_16                     (16u)
 
-#define UART_1_BIT_CENTER                         (UART_1_OVER_SAMPLE_COUNT - 1u)
+#define UART_1_BIT_CENTER                         (UART_1_OVER_SAMPLE_COUNT - 2u)
 
 #define UART_1_FIFO_LENGTH                        (4u)
 #define UART_1_NUMBER_OF_START_BIT                (1u)
 #define UART_1_MAX_BYTE_VALUE                     (0xFFu)
 
-/* 8X always for count7 implementation*/
+/* 8X always for count7 implementation */
 #define UART_1_TXBITCTR_BREAKBITS8X   ((UART_1_BREAK_BITS_TX * UART_1_OVER_SAMPLE_8) - 1u)
-/* 8X or 16X for DP implementation*/
+/* 8X or 16X for DP implementation */
 #define UART_1_TXBITCTR_BREAKBITS ((UART_1_BREAK_BITS_TX * UART_1_OVER_SAMPLE_COUNT) - 1u)
 
 #define UART_1_HALF_BIT_COUNT   \
@@ -313,13 +293,13 @@ void UART_1_Wakeup(void) ;
     #define UART_1_RXBITCTR_INIT  ((((UART_1_BREAK_BITS_RX + UART_1_NUMBER_OF_START_BIT) \
                             * UART_1_OVER_SAMPLE_COUNT) + UART_1_HALF_BIT_COUNT) - 1u)
 
-
 #else /* UART_1_OVER_SAMPLE_COUNT == UART_1_OVER_SAMPLE_16 */
     #define UART_1_HD_TXBITCTR_INIT   ((8u * UART_1_OVER_SAMPLE_COUNT) - 1u)
-    /* 7bit counter need one more bit for OverSampleCount=16 */
+    /* 7bit counter need one more bit for OverSampleCount = 16 */
     #define UART_1_RXBITCTR_INIT      (((7u * UART_1_OVER_SAMPLE_COUNT) - 1u) + \
                                                       UART_1_HALF_BIT_COUNT)
 #endif /* End UART_1_OVER_SAMPLE_COUNT */
+
 #define UART_1_HD_RXBITCTR_INIT                   UART_1_RXBITCTR_INIT
 
 
@@ -328,14 +308,14 @@ void UART_1_Wakeup(void) ;
 ***************************************/
 
 extern uint8 UART_1_initVar;
-#if( UART_1_TX_ENABLED && (UART_1_TXBUFFERSIZE > UART_1_FIFO_LENGTH))
-    extern volatile uint8 UART_1_txBuffer[UART_1_TXBUFFERSIZE];
+#if (UART_1_TX_INTERRUPT_ENABLED && UART_1_TX_ENABLED)
+    extern volatile uint8 UART_1_txBuffer[UART_1_TX_BUFFER_SIZE];
     extern volatile uint8 UART_1_txBufferRead;
     extern uint8 UART_1_txBufferWrite;
-#endif /* End UART_1_TX_ENABLED */
-#if( ( UART_1_RX_ENABLED || UART_1_HD_ENABLED ) && \
-     (UART_1_RXBUFFERSIZE > UART_1_FIFO_LENGTH) )
-    extern volatile uint8 UART_1_rxBuffer[UART_1_RXBUFFERSIZE];
+#endif /* (UART_1_TX_INTERRUPT_ENABLED && UART_1_TX_ENABLED) */
+#if (UART_1_RX_INTERRUPT_ENABLED && (UART_1_RX_ENABLED || UART_1_HD_ENABLED))
+    extern uint8 UART_1_errorStatus;
+    extern volatile uint8 UART_1_rxBuffer[UART_1_RX_BUFFER_SIZE];
     extern volatile uint8 UART_1_rxBufferRead;
     extern volatile uint8 UART_1_rxBufferWrite;
     extern volatile uint8 UART_1_rxBufferLoopDetect;
@@ -343,8 +323,8 @@ extern uint8 UART_1_initVar;
     #if (UART_1_RXHW_ADDRESS_ENABLED)
         extern volatile uint8 UART_1_rxAddressMode;
         extern volatile uint8 UART_1_rxAddressDetected;
-    #endif /* End EnableHWAddress */
-#endif /* End UART_1_RX_ENABLED */
+    #endif /* (UART_1_RXHW_ADDRESS_ENABLED) */
+#endif /* (UART_1_RX_INTERRUPT_ENABLED && (UART_1_RX_ENABLED || UART_1_HD_ENABLED)) */
 
 
 /***************************************
@@ -373,12 +353,10 @@ extern uint8 UART_1_initVar;
 #define UART_1_NUMBER_OF_STOP_BITS    (1u)
 
 #if (UART_1_RXHW_ADDRESS_ENABLED)
-    #define UART_1_RXADDRESSMODE      (0u)
-    #define UART_1_RXHWADDRESS1       (0u)
-    #define UART_1_RXHWADDRESS2       (0u)
-    /* Backward compatible define */
-    #define UART_1_RXAddressMode      UART_1_RXADDRESSMODE
-#endif /* End EnableHWAddress */
+    #define UART_1_RX_ADDRESS_MODE    (0u)
+    #define UART_1_RX_HW_ADDRESS1     (0u)
+    #define UART_1_RX_HW_ADDRESS2     (0u)
+#endif /* (UART_1_RXHW_ADDRESS_ENABLED) */
 
 #define UART_1_INIT_RX_INTERRUPTS_MASK \
                                   (uint8)((1 << UART_1_RX_STS_FIFO_NOTEMPTY_SHIFT) \
@@ -515,10 +493,25 @@ extern uint8 UART_1_initVar;
 
 
 /***************************************
-* Renamed global variables or defines
-* for backward compatible
+* The following code is DEPRECATED and
+* should not be used in new projects.
 ***************************************/
 
+/* UART v2_40 obsolete definitions */
+#define UART_1_WAIT_1_MS      UART_1_BL_CHK_DELAY_MS   
+
+#define UART_1_TXBUFFERSIZE   UART_1_TX_BUFFER_SIZE
+#define UART_1_RXBUFFERSIZE   UART_1_RX_BUFFER_SIZE
+
+#if (UART_1_RXHW_ADDRESS_ENABLED)
+    #define UART_1_RXADDRESSMODE  UART_1_RX_ADDRESS_MODE
+    #define UART_1_RXHWADDRESS1   UART_1_RX_HW_ADDRESS1
+    #define UART_1_RXHWADDRESS2   UART_1_RX_HW_ADDRESS2
+    /* Backward compatible define */
+    #define UART_1_RXAddressMode  UART_1_RXADDRESSMODE
+#endif /* (UART_1_RXHW_ADDRESS_ENABLED) */
+
+/* UART v2_30 obsolete definitions */
 #define UART_1_initvar                    UART_1_initVar
 
 #define UART_1_RX_Enabled                 UART_1_RX_ENABLED
