@@ -89,7 +89,9 @@ typedef enum {
 	CHIP_YM2610B		= 0x00010,
 	CHIP_Y8950			= 0x00020,
 	CHIP_Y8950ADPCM 	= 0x10020,
-    CHIP_YM3438         = 0x00021
+	CHIP_YM3438			= 0x00021,
+	
+	CHIP_MOS6581		= 0x00022,
 } CHIP_TYPE;
 
 struct tag_CHIP_INFO;
@@ -117,6 +119,9 @@ void ym2608_write_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t 
 void ym2608_read_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t size);
 uint8_t ym2608_check_adpcm(CHIP_INFO *chip);
 void ym2608_init(CHIP_INFO *chip);
+
+void mos6581_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data);
+void mos6581_init(CHIP_INFO *chip);
 
 #endif
 

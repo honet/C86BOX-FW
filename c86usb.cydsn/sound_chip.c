@@ -431,3 +431,22 @@ uint8_t ym2608_check_adpcm(CHIP_INFO *chip)
 	}
 	return flag;
 }
+
+
+// --------------------------------------------------------------------------
+// exaddr = [7:4]slot,[3:1]chip,[0:0]ex
+void mos6581_write(CHIP_INFO *chip, uint8_t exaddr __unused, uint8_t addr, uint8_t data)
+{
+    // ウエイト無し
+	// write address ------------
+	cbus_write(chip->slot, chip->areg_addr[0], addr);
+	// write data --------------
+	cbus_write(chip->slot, chip->dreg_addr[0], data);
+}
+
+void mos6581_init(CHIP_INFO *chip)
+{
+    for (int i=0; i<=0x1c; i++){
+        mos6581_write(chip, 0, i, 0);
+    }
+}

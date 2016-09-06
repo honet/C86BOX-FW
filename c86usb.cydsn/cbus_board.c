@@ -143,6 +143,7 @@ void cbus_board_init(uint8_t slot)
 	case CBUS_BOARD_86:
 	case CBUS_BOARD_WAVEMASTER:
 	case CBUS_BOARD_WAVESTAR:
+    case CBUS_BOARD_WAVESMIT:
 		// OPNAマスク解除
 		// bit 1: YM2608(OPNA)マスク設定   : 0=non-mask / 1=OPNA masked
 		// bit 0: YM2608(OPNA)拡張部分機能 : 0=OPN / 1=OPNA
@@ -160,7 +161,16 @@ void cbus_board_init(uint8_t slot)
 		break;
 		
 	case CBUS_BOARD_118:
-	default:
+		break;
+
+	case CBUS_BOARD_SID98:
+        mos6581_init(&board->chip[0]);
+        mos6581_init(&board->chip[1]);
+        mos6581_init(&board->chip[2]);
+        mos6581_init(&board->chip[3]);
+        break;
+
+    default:
 		break;
 	}
 }
@@ -794,6 +804,26 @@ void cbus_board_setup(void)
 			board->chip[1].wait_timerif = &timerRes[timeridx++];
 			break;
 
+		// SID98 ----------------------------------------------------
+		// 俺ボード
+		case CBUS_BOARD_SID98:
+			board->nchips = 4;
+			board->boardtype = CBUS_BOARD_SID98;
+			board->control_write = 0;
+			board->control_read = 0;
+			for (int k=0; k<4; k++) {
+				uint32_t base = 0x788;
+				board->chip[k].writefunc = mos6581_write;
+				board->chip[k].slot = i;
+				board->chip[k].chiptype = CHIP_MOS6581;
+				board->chip[k].dreg_addr[0] = base + (k*2);
+				board->chip[k].areg_addr[0] = base + (k*2) + 1;
+				board->chip[k].waitidx = 0;
+				board->chip[k].waitdef = 0;
+				board->chip[k].wait_timerif = &timerRes[timeridx++];
+			}
+			
+			break;
 
 		case CBUS_BOARD_UNKNOWN:
 		default:
