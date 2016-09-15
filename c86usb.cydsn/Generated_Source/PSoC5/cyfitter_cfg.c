@@ -55,15 +55,6 @@
     #error Unsupported toolchain
 #endif
 
-#if defined(__ARMCC_VERSION)
-    extern unsigned int Load$$LR$$CYCONFIGECC$$Base;
-    #pragma diag_suppress 170,1296
-    #define CYDEV_ECC_VIRT_BASE 0x80000000
-    #define CYAPP_ECC_OFFSET ((uint32)&Load$$LR$$CYCONFIGECC$$Base - CYDEV_ECC_VIRT_BASE)
-#elif defined (__GNUC__) || defined (__ICCARM__)
-    extern int CY_ECC_OFFSET;
-    #define CYAPP_ECC_OFFSET ((uint32)&CY_ECC_OFFSET)
-#endif
 
 CY_CFG_UNUSED
 static void CYMEMZERO(void *s, size_t n);
@@ -140,38 +131,41 @@ CYPACKED typedef struct
 	uint8 value;
 } CYPACKED_ATTR cy_cfg_addrvalue_t;
 
-#define cy_cfg_addr_table ((const uint32 CYFAR *)(0x48000000u + CYAPP_ECC_OFFSET))
-#define cy_cfg_data_table ((const cy_cfg_addrvalue_t CYFAR *)(0x480000ACu + CYAPP_ECC_OFFSET))
+#define cy_cfg_addr_table ((const uint32 CYFAR *)0x48000000u)
+#define cy_cfg_data_table ((const cy_cfg_addrvalue_t CYFAR *)0x480000ACu)
 
-/* UDB_0_3_1_CONFIG Address: CYDEV_UCFG_B0_P5_U1_BASE Size (bytes): 128 */
-#define BS_UDB_0_3_1_CONFIG_VAL ((const uint8 CYFAR *)(0x480011E8u + CYAPP_ECC_OFFSET))
+/* IOPORT_8 Address: CYDEV_PRTDSI_PRT15_BASE Size (bytes): 7 */
+#define BS_IOPORT_8_VAL ((const uint8 CYFAR *)0x480012B0u)
+
+/* UDB_1_2_0_CONFIG Address: CYDEV_UCFG_B0_P3_U1_BASE Size (bytes): 128 */
+#define BS_UDB_1_2_0_CONFIG_VAL ((const uint8 CYFAR *)0x480012B8u)
 
 /* IOPINS0_0 Address: CYREG_PRT0_DR Size (bytes): 10 */
-#define BS_IOPINS0_0_VAL ((const uint8 CYFAR *)(0x48001268u + CYAPP_ECC_OFFSET))
+#define BS_IOPINS0_0_VAL ((const uint8 CYFAR *)0x48001338u)
 
 /* IOPINS0_7 Address: CYREG_PRT12_DR Size (bytes): 10 */
-#define BS_IOPINS0_7_VAL ((const uint8 CYFAR *)(0x48001274u + CYAPP_ECC_OFFSET))
+#define BS_IOPINS0_7_VAL ((const uint8 CYFAR *)0x48001344u)
 
 /* IOPINS0_8 Address: CYREG_PRT15_DR Size (bytes): 10 */
-#define BS_IOPINS0_8_VAL ((const uint8 CYFAR *)(0x48001280u + CYAPP_ECC_OFFSET))
+#define BS_IOPINS0_8_VAL ((const uint8 CYFAR *)0x48001350u)
 
 /* IOPINS0_1 Address: CYREG_PRT1_DR Size (bytes): 10 */
-#define BS_IOPINS0_1_VAL ((const uint8 CYFAR *)(0x4800128Cu + CYAPP_ECC_OFFSET))
+#define BS_IOPINS0_1_VAL ((const uint8 CYFAR *)0x4800135Cu)
 
 /* IOPINS0_2 Address: CYREG_PRT2_DM0 Size (bytes): 8 */
-#define BS_IOPINS0_2_VAL ((const uint8 CYFAR *)(0x48001298u + CYAPP_ECC_OFFSET))
+#define BS_IOPINS0_2_VAL ((const uint8 CYFAR *)0x48001368u)
 
 /* IOPINS0_3 Address: CYREG_PRT3_DR Size (bytes): 10 */
-#define BS_IOPINS0_3_VAL ((const uint8 CYFAR *)(0x480012A0u + CYAPP_ECC_OFFSET))
+#define BS_IOPINS0_3_VAL ((const uint8 CYFAR *)0x48001370u)
 
 /* IOPINS0_4 Address: CYREG_PRT4_DR Size (bytes): 10 */
-#define BS_IOPINS0_4_VAL ((const uint8 CYFAR *)(0x480012ACu + CYAPP_ECC_OFFSET))
+#define BS_IOPINS0_4_VAL ((const uint8 CYFAR *)0x4800137Cu)
 
 /* IOPINS0_5 Address: CYREG_PRT5_DR Size (bytes): 10 */
-#define BS_IOPINS0_5_VAL ((const uint8 CYFAR *)(0x480012B8u + CYAPP_ECC_OFFSET))
+#define BS_IOPINS0_5_VAL ((const uint8 CYFAR *)0x48001388u)
 
 /* IOPINS0_6 Address: CYREG_PRT6_DR Size (bytes): 10 */
-#define BS_IOPINS0_6_VAL ((const uint8 CYFAR *)(0x480012C4u + CYAPP_ECC_OFFSET))
+#define BS_IOPINS0_6_VAL ((const uint8 CYFAR *)0x48001394u)
 
 
 /*******************************************************************************
@@ -404,8 +398,8 @@ void cyfitter_cfg(void)
 		static const cfg_memset_t CYCODE cfg_memset_list [] = {
 			/* address, size */
 			{(void CYFAR *)(CYREG_TMR0_CFG0), 12u},
-			{(void CYFAR *)(CYDEV_UCFG_B0_P0_U0_BASE), 2688u},
-			{(void CYFAR *)(CYDEV_UCFG_B0_P5_ROUTE_BASE), 1280u},
+			{(void CYFAR *)(CYDEV_UCFG_B0_P0_U0_BASE), 1664u},
+			{(void CYFAR *)(CYDEV_UCFG_B0_P3_ROUTE_BASE), 2304u},
 			{(void CYFAR *)(CYDEV_UCFG_B1_P2_U0_BASE), 2048u},
 			{(void CYFAR *)(CYDEV_UCFG_DSI0_BASE), 2560u},
 			{(void CYFAR *)(CYDEV_UCFG_DSI12_BASE), 512u},
@@ -414,7 +408,8 @@ void cyfitter_cfg(void)
 
 		static const cfg_memcpy_t CYCODE cfg_memcpy_list [] = {
 			/* dest, src, size */
-			{(void CYFAR *)(CYDEV_UCFG_B0_P5_U1_BASE), BS_UDB_0_3_1_CONFIG_VAL, 128u},
+			{(void CYFAR *)(CYDEV_PRTDSI_PRT15_BASE), BS_IOPORT_8_VAL, 7u},
+			{(void CYFAR *)(CYDEV_UCFG_B0_P3_U1_BASE), BS_UDB_1_2_0_CONFIG_VAL, 128u},
 		};
 
 		uint8 CYDATA i;

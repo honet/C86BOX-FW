@@ -29,8 +29,10 @@
 
 void    `$INSTANCE_NAME`_Start(void);
 void    `$INSTANCE_NAME`_Stop(void);
-void    `$INSTANCE_NAME`_Write(uint16_t data);
-uint16_t `$INSTANCE_NAME`_Read();
+void     `$INSTANCE_NAME`_Write8(uint8_t isodd, uint16_t data);
+void     `$INSTANCE_NAME`_Write16(uint16_t data);
+uint8_t `$INSTANCE_NAME`_Read8(uint8_t isodd);
+uint16_t `$INSTANCE_NAME`_Read16();
 void     `$INSTANCE_NAME`_BusyWait();
 
 
@@ -39,12 +41,20 @@ void     `$INSTANCE_NAME`_BusyWait();
 ***************************************/
 
 // STATUS_REG のフラグ
-#define `$INSTANCE_NAME`_BUS_BUSY                 (0x01u)
-#define `$INSTANCE_NAME`_DATA_VALID               (0x02u)
+#define `$INSTANCE_NAME`_STATUSBIT_BUS_BUSY          (0x01u)
+#define `$INSTANCE_NAME`_STATUSBIT_DATA_VALID        (0x02u)
+#define `$INSTANCE_NAME`_STATUSBIT_CMD_FIFO_FULL     (0x04u)
+
 
 // CMD_FIFO_REG のフラグ
 #define `$INSTANCE_NAME`_COMMAND_READ             (0x02u)
 #define `$INSTANCE_NAME`_COMMAND_WRITE            (0x00u)
+
+#define `$INSTANCE_NAME`_COMMAND_BYTE             (0x04u)
+#define `$INSTANCE_NAME`_COMMAND_WORD             (0x00u)
+
+#define `$INSTANCE_NAME`_COMMAND_ADDR_ODD         (0x01u)
+#define `$INSTANCE_NAME`_COMMAND_ADDR_EVEN        (0x00u)
 
 
 /***************************************

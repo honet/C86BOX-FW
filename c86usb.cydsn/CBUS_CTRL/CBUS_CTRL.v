@@ -56,9 +56,12 @@ wire cmd_not_full;   /* Command FIFO not full status to system bus       */
 wire data_not_full;  /* Data FIFO not full status to system bus          */
 wire data_valid;     /* signal to system that input data is valid        */
 wire [7:0] data_lsb; /* lower part of data bus                           */
-wire [7:0] data_msb; /* lower part of data bus                           */
+wire [7:0] data_msb; /* higher part of data bus                           */
 
 wire cmd;            /* signal to command decoding                       */
+reg is_odd;         /* */
+reg is_byte_access; /* */
+
 wire data_ready;     /* provide data ready status to state machine       */
 wire cmd_ready;      /* provide command ready status to state machine    */
 wire op_clk;         /* internal clock to drive the component            */
@@ -80,31 +83,6 @@ cy_psoc3_udb_clock_enable_v1_0 #(.sync_mode(`TRUE)) ClkSync
     /* input  */    .enable(1'b1),
     /* output */    .clock_out(op_clk)
 );
-
-
-// ------------------------------------------------------
-// データバスリードクロック生成
-cy_psoc3_udb_clock_enable_v1_0 #(.sync_mode(`TRUE)) StsClkEn
-(
-    /* input  */    .clock_in(CLKIN),
-    /* input  */    .enable(data_valid),
-    /* output */    .clock_out(sts_clk)  /* Single pulse per read transaction */
-); 
-
-/* Status register for lsb input data storage */   
-cy_psoc3_status #(.cy_force_order(1), .cy_md_select(8'hFF)) LsbReg
-(
-    /* input          */  .clock(sts_clk),
-    /* input  [07:00] */  .status(DIN_L)
-);
-
-/* Status register for msb input data storage */            
-cy_psoc3_status #(.cy_force_order(1), .cy_md_select(8'hFF)) MsbReg
-(
-    /* input          */  .clock(sts_clk),
-    /* input  [07:00] */  .status(DIN_H)
-);
-
 
 // -------------------------------------------------------
 // ステートマシン
@@ -128,10 +106,15 @@ localparam [4:0] STATE_READ_WAIT_HI_PULSE           = {2'b01, 3'd7};  // 1,7
 
 reg [4:0] state;
 
+reg [4:0] cmdcount;
+
 always @(posedge op_clk or posedge reset)
 begin
     if(reset) begin
         state <= STATE_IDLE;
+        is_odd <= 1'd0;
+        is_byte_access <= 1'd0;
+        cmdcount <= 5'd0;
     end else begin
         case(state)
         // ---------------------------
@@ -142,9 +125,15 @@ begin
         // ---------------------------
         // COMMAND
         STATE_LOAD_CMD:
+        begin
+          cmdcount <= cmdcount+5'd1;
             state <= STATE_DECODE_CMD;
+        end
         STATE_DECODE_CMD:
         begin
+            is_odd <= data_lsb[0];
+            is_byte_access <= data_lsb[2];
+
             // cmd=1:READ cmd=0:WRITE
             if(cmd)
                 state <= STATE_READ_RELOAD_LO_PULSE_COUNTER;
@@ -204,13 +193,17 @@ end
 /* Status register bit locations (bit 7-2 unused) */
 localparam BUS_BUSY        = 3'd0;    /* busy */
 localparam DATA_VALID      = 3'd1;    /* read data is valid */ 
+localparam CMD_FULL        = 3'd2;    /* CMD FIFO is full */
 wire [7:0] status;
 
 wire busy = ~(state==STATE_IDLE);
 
 assign status[BUS_BUSY]   = busy;           /* transparent */
 assign status[DATA_VALID] = data_valid;     /* sticky      */
-assign status[7:2] = 6'd0;   /* unused bits */
+assign status[CMD_FULL]   = ~cmd_not_full;  /* transparent */
+//assign status[7:3] = 5'd0;   /* unused bits */
+//assign status[7:3] = state;   /* unused bits */
+assign status[7:3] = cmdcount;   /* unused bits */
 
 cy_psoc3_status #(.cy_force_order(1), .cy_md_select(8'h02)) StsReg
 (
@@ -233,6 +226,36 @@ begin
 end
 
 
+// ------------------------------------------------------
+// データバスリードクロック生成
+cy_psoc3_udb_clock_enable_v1_0 #(.sync_mode(`TRUE)) StsClkEn
+(
+    /* input  */    .clock_in(CLKIN),
+    /* input  */    .enable(data_valid),
+    /* output */    .clock_out(sts_clk)  /* Single pulse per read transaction */
+); 
+
+// ------------------------------------------------------
+// データバスリード
+wire [7:0] din_msb;
+wire [7:0] din_lsb;
+assign din_msb = (is_byte_access) ? 8'd0: DIN_H;
+assign din_lsb = (is_byte_access && is_odd) ? DIN_H : DIN_L;
+
+/* Status register for lsb input data storage */   
+cy_psoc3_status #(.cy_force_order(1), .cy_md_select(8'hFF)) LsbReg
+(
+    /* input          */  .clock(sts_clk),
+    /* input  [07:00] */  .status(din_lsb/*DIN_L*/)
+);
+
+/* Status register for msb input data storage */            
+cy_psoc3_status #(.cy_force_order(1), .cy_md_select(8'hFF)) MsbReg
+(
+    /* input          */  .clock(sts_clk),
+    /* input  [07:00] */  .status(din_msb/*DIN_H*/)
+);
+
 // -------------------------------------------
 // データバス出力有効化信号(OUT_EN)生成
 always @(posedge op_clk)
@@ -249,8 +272,10 @@ always @(posedge op_clk)
 begin
     if(state == STATE_WRITE_SET_DATA)
     begin
-        DOUT_H <= data_msb;
-        DOUT_L <= data_lsb;
+        //DOUT_H <= (is_byte_access) ? (is_odd ? data_lsb : 8'd0) : data_msb;
+        //DOUT_L <= (is_byte_access && is_odd) ? 8'd0 : data_lsb;
+        DOUT_H <= (is_byte_access) ? (is_odd ? data_lsb : 8'd0) : data_msb;
+        DOUT_L <= (is_byte_access && is_odd) ? data_lsb : data_lsb;
     end
 end
 
@@ -263,7 +288,8 @@ assign DOUT_EN = oe;
 //assign data_valid = (state == STATE_READ_WAIT_LO_PULSE | state == STATE_READ_WAIT_IORDY);
 assign data_valid = (state == STATE_READ_RELOAD_HI_PULSE_COUNTER);
 
-assign BHE = 1'd1;
+assign BHE = ~(is_odd || (is_byte_access==1'd0));
+
 assign NMRC = 1'b1;
 assign NMWC = 1'b1;
 assign NMWE = 1'b1;

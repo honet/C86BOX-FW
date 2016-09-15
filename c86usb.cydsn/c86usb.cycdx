@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <blockRegMap version="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://cypress.com/xsd/cyblockregmap cyblockregmap.xsd" xmlns="http://cypress.com/xsd/cyblockregmap">
-  <block name="ChipWaitTimer3" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="ChipWaitTimer0" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="ChipWaitTimer4" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="DigitalReset" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
-    <register name="DigitalReset_CONTROL_REG" address="0x40006576" bitWidth="8" desc="" hidden="false" />
-  </block>
+  <block name="ChipWaitTimer1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="BUSCLK" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="TickTimerISR" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="ChipWaitTimer1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="not_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="ChipWaitTimer3" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="ChipWaitTimer5" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="cydff_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="ChipWaitTimer7" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="ChipWaitTimer5" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="ZeroTerminal_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="ChipWaitTimer2" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="ChipWaitTimer6" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="ZeroTerminal_4" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="not_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="DigitalReset" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
+    <register name="DigitalReset_CONTROL_REG" address="0x40006470" bitWidth="8" desc="" hidden="false" />
+  </block>
+  <block name="DIPSW" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="EEPROM" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="ZeroTerminal_17" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="cy_boot" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="SWReadClk" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="DipSwReadReg" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
-    <register name="DipSwReadReg_STATUS_REG" address="0x40006569" bitWidth="8" desc="" hidden="false" />
-    <register name="DipSwReadReg_MASK_REG" address="0x40006589" bitWidth="8" desc="" hidden="false" />
-    <register name="DipSwReadReg_STATUS_AUX_CTL_REG" address="0x40006599" bitWidth="8" desc="" hidden="false">
+    <register name="DipSwReadReg_STATUS_REG" address="0x40006565" bitWidth="8" desc="" hidden="false" />
+    <register name="DipSwReadReg_MASK_REG" address="0x40006585" bitWidth="8" desc="" hidden="false" />
+    <register name="DipSwReadReg_STATUS_AUX_CTL_REG" address="0x40006595" bitWidth="8" desc="" hidden="false">
       <field name="FIFO0" from="5" to="5" access="RW" resetVal="" desc="FIFO0 clear">
         <value name="ENABLED" value="1" desc="Enable counter" />
         <value name="DISABLED" value="0" desc="Disable counter" />
@@ -46,19 +51,13 @@
       </field>
     </register>
   </block>
-  <block name="DIPSW" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="EEPROM" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="cy_boot" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="Bootloadable_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="SWReadClk" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="ZeroTerminal_17" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="ZeroTerminal_9" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="ZeroTerminal_16" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="ZeroTerminal_8" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="ZeroTerminal_5" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="ZeroTerminal_16" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="ZeroTerminal_4" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="ZeroTerminal_13" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="ZeroTerminal_12" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-  <block name="ZeroTerminal_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
+  <block name="ZeroTerminal_9" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="CBUS_MWE" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="CBUS_BHE" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="CBUS_MWC" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
@@ -933,7 +932,7 @@
   </block>
   <block name="CBUSControl" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="CBusAddrRegL" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
-    <register name="CBusAddrRegL_CONTROL_REG" address="0x4000647E" bitWidth="8" desc="" hidden="false" />
+    <register name="CBusAddrRegL_CONTROL_REG" address="0x4000657A" bitWidth="8" desc="" hidden="false" />
   </block>
   <block name="timer_clock" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="TickTimer" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
@@ -994,7 +993,7 @@
     <register name="TickTimer_COUNTER" address="0x40004F06" bitWidth="16" desc="TMRx.CNT_CMP0 - Current Down Counter Value" hidden="false" />
   </block>
   <block name="CBusAddrRegU" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
-    <register name="CBusAddrRegU_CONTROL_REG" address="0x40006475" bitWidth="8" desc="" hidden="false" />
+    <register name="CBusAddrRegU_CONTROL_REG" address="0x40006472" bitWidth="8" desc="" hidden="false" />
   </block>
   <block name="CBUS_ADDR_H" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="Rx_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
@@ -1002,16 +1001,17 @@
     <block name="IntClock" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
     <block name="VirtualMux_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
     <block name="BUART" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-    <register name="RX_UART_1_RX_ADDRESS1" address="0x4000642B" bitWidth="8" desc="RX Address1 Register" hidden="false" />
-    <register name="RX_UART_1_RX_ADDRESS2" address="0x4000643B" bitWidth="8" desc="RX Address2 Register" hidden="false" />
-    <register name="RX_UART_1_RX_DATA" address="0x4000644B" bitWidth="8" desc="RX Data Register" hidden="false" />
-    <register name="TX_UART_1_TX_STATUS" address="0x40006460" bitWidth="8" desc="TX status register" hidden="false">
+    <register name="TX_UART_1_TX_DATA" address="0x40006443" bitWidth="8" desc="TX Data Register" hidden="false" />
+    <register name="TX_UART_1_TX_STATUS" address="0x40006463" bitWidth="8" desc="TX status register" hidden="false">
       <field name="UART_1_TX_STS_COMPLETE" from="0" to="0" access="R" resetVal="" desc="" />
       <field name="UART_1_TX_STS_FIFO_EMPTY" from="1" to="1" access="R" resetVal="" desc="" />
       <field name="UART_1_TX_STS_FIFO_FULL" from="2" to="2" access="R" resetVal="" desc="" />
       <field name="UART_1_TX_STS_FIFO_NOT_FULL" from="3" to="3" access="R" resetVal="" desc="" />
     </register>
-    <register name="RX_UART_1_RX_STATUS" address="0x4000646B" bitWidth="8" desc="RX status register" hidden="false">
+    <register name="RX_UART_1_RX_ADDRESS1" address="0x40006529" bitWidth="8" desc="RX Address1 Register" hidden="false" />
+    <register name="RX_UART_1_RX_ADDRESS2" address="0x40006539" bitWidth="8" desc="RX Address2 Register" hidden="false" />
+    <register name="RX_UART_1_RX_DATA" address="0x40006549" bitWidth="8" desc="RX Data Register" hidden="false" />
+    <register name="RX_UART_1_RX_STATUS" address="0x40006569" bitWidth="8" desc="RX status register" hidden="false">
       <field name="UART_1_RX_STS_MRKSPC" from="0" to="0" access="R" resetVal="" desc="" />
       <field name="UART_1_RX_STS_BREAK" from="1" to="1" access="R" resetVal="" desc="" />
       <field name="UART_1_RX_STS_PAR_ERROR" from="2" to="2" access="R" resetVal="" desc="" />
@@ -1020,12 +1020,11 @@
       <field name="UART_1_RX_STS_FIFO_NOTEMPTY" from="5" to="5" access="R" resetVal="" desc="" />
       <field name="UART_1_RX_STS_ADDR_MATCH" from="6" to="6" access="R" resetVal="" desc="" />
     </register>
-    <register name="TX_UART_1_TX_DATA" address="0x40006548" bitWidth="8" desc="TX Data Register" hidden="false" />
   </block>
   <block name="WAITCLK" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="CBUS_DATA_H" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="LEDControl" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
-    <register name="LEDControl_CONTROL_REG" address="0x4000657A" bitWidth="8" desc="" hidden="false" />
+    <register name="LEDControl_CONTROL_REG" address="0x40006479" bitWidth="8" desc="" hidden="false" />
   </block>
   <block name="Tx_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
 </blockRegMap>

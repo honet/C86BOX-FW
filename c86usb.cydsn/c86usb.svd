@@ -9,7 +9,7 @@
     <peripheral>
       <name>DigitalReset</name>
       <description>No description available</description>
-      <baseAddress>0x40006576</baseAddress>
+      <baseAddress>0x40006470</baseAddress>
       <addressBlock>
         <offset>0</offset>
         <size>0x0</size>
@@ -30,7 +30,7 @@
     <peripheral>
       <name>DipSwReadReg</name>
       <description>No description available</description>
-      <baseAddress>0x40006569</baseAddress>
+      <baseAddress>0x40006565</baseAddress>
       <addressBlock>
         <offset>0</offset>
         <size>0x0</size>
@@ -1684,7 +1684,7 @@
     <peripheral>
       <name>CBusAddrRegL</name>
       <description>No description available</description>
-      <baseAddress>0x4000647E</baseAddress>
+      <baseAddress>0x4000657A</baseAddress>
       <addressBlock>
         <offset>0</offset>
         <size>0x0</size>
@@ -1997,7 +1997,7 @@
     <peripheral>
       <name>CBusAddrRegU</name>
       <description>No description available</description>
-      <baseAddress>0x40006475</baseAddress>
+      <baseAddress>0x40006472</baseAddress>
       <addressBlock>
         <offset>0</offset>
         <size>0x0</size>
@@ -2026,27 +2026,9 @@
       </addressBlock>
       <registers>
         <register>
-          <name>RX_UART_1_RX_ADDRESS1</name>
-          <description>RX Address1 Register</description>
-          <addressOffset>0x4000642B</addressOffset>
-          <size>8</size>
-          <access>read-write</access>
-          <resetValue>0</resetValue>
-          <resetMask>0</resetMask>
-        </register>
-        <register>
-          <name>RX_UART_1_RX_ADDRESS2</name>
-          <description>RX Address2 Register</description>
-          <addressOffset>0x4000643B</addressOffset>
-          <size>8</size>
-          <access>read-write</access>
-          <resetValue>0</resetValue>
-          <resetMask>0</resetMask>
-        </register>
-        <register>
-          <name>RX_UART_1_RX_DATA</name>
-          <description>RX Data Register</description>
-          <addressOffset>0x4000644B</addressOffset>
+          <name>TX_UART_1_TX_DATA</name>
+          <description>TX Data Register</description>
+          <addressOffset>0x40006443</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -2055,7 +2037,7 @@
         <register>
           <name>TX_UART_1_TX_STATUS</name>
           <description>TX status register</description>
-          <addressOffset>0x40006460</addressOffset>
+          <addressOffset>0x40006463</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -2092,9 +2074,36 @@
           </fields>
         </register>
         <register>
+          <name>RX_UART_1_RX_ADDRESS1</name>
+          <description>RX Address1 Register</description>
+          <addressOffset>0x40006529</addressOffset>
+          <size>8</size>
+          <access>read-write</access>
+          <resetValue>0</resetValue>
+          <resetMask>0</resetMask>
+        </register>
+        <register>
+          <name>RX_UART_1_RX_ADDRESS2</name>
+          <description>RX Address2 Register</description>
+          <addressOffset>0x40006539</addressOffset>
+          <size>8</size>
+          <access>read-write</access>
+          <resetValue>0</resetValue>
+          <resetMask>0</resetMask>
+        </register>
+        <register>
+          <name>RX_UART_1_RX_DATA</name>
+          <description>RX Data Register</description>
+          <addressOffset>0x40006549</addressOffset>
+          <size>8</size>
+          <access>read-write</access>
+          <resetValue>0</resetValue>
+          <resetMask>0</resetMask>
+        </register>
+        <register>
           <name>RX_UART_1_RX_STATUS</name>
           <description>RX status register</description>
-          <addressOffset>0x4000646B</addressOffset>
+          <addressOffset>0x40006569</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -2151,21 +2160,12 @@
             </field>
           </fields>
         </register>
-        <register>
-          <name>TX_UART_1_TX_DATA</name>
-          <description>TX Data Register</description>
-          <addressOffset>0x40006548</addressOffset>
-          <size>8</size>
-          <access>read-write</access>
-          <resetValue>0</resetValue>
-          <resetMask>0</resetMask>
-        </register>
       </registers>
     </peripheral>
     <peripheral>
       <name>LEDControl</name>
       <description>No description available</description>
-      <baseAddress>0x4000657A</baseAddress>
+      <baseAddress>0x40006479</baseAddress>
       <addressBlock>
         <offset>0</offset>
         <size>0x0</size>

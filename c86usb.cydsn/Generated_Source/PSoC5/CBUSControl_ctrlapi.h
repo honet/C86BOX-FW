@@ -29,8 +29,10 @@
 
 void    CBUSControl_Start(void);
 void    CBUSControl_Stop(void);
-void    CBUSControl_Write(uint16_t data);
-uint16_t CBUSControl_Read();
+void     CBUSControl_Write8(uint8_t isodd, uint16_t data);
+void     CBUSControl_Write16(uint16_t data);
+uint8_t CBUSControl_Read8(uint8_t isodd);
+uint16_t CBUSControl_Read16();
 void     CBUSControl_BusyWait();
 
 
@@ -39,12 +41,20 @@ void     CBUSControl_BusyWait();
 ***************************************/
 
 // STATUS_REG のフラグ
-#define CBUSControl_BUS_BUSY                 (0x01u)
-#define CBUSControl_DATA_VALID               (0x02u)
+#define CBUSControl_STATUSBIT_BUS_BUSY          (0x01u)
+#define CBUSControl_STATUSBIT_DATA_VALID        (0x02u)
+#define CBUSControl_STATUSBIT_CMD_FIFO_FULL     (0x04u)
+
 
 // CMD_FIFO_REG のフラグ
 #define CBUSControl_COMMAND_READ             (0x02u)
 #define CBUSControl_COMMAND_WRITE            (0x00u)
+
+#define CBUSControl_COMMAND_BYTE             (0x04u)
+#define CBUSControl_COMMAND_WORD             (0x00u)
+
+#define CBUSControl_COMMAND_ADDR_ODD         (0x01u)
+#define CBUSControl_COMMAND_ADDR_EVEN        (0x00u)
 
 
 /***************************************

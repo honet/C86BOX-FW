@@ -4,6 +4,7 @@
 #include "cbus_board.h"
 #include "sound_chip.h"
 #include "eeprom_config.h"
+#include "cbus_init118.h"
 
 struct tag_CBUS_BOARD_INFO;
 
@@ -12,8 +13,8 @@ typedef struct tag_CBUS_BOARD_INFO{
 	CBUS_BOARD_TYPE boardtype;
 	uint8_t nchips;
 	CHIP_INFO chip[NMAXCHIPS];
-	void (*control_write)(struct tag_CBUS_BOARD_INFO *board, uint8_t idx, uint16_t data);
-	uint16_t (*control_read)(struct tag_CBUS_BOARD_INFO *board, uint16_t idx);
+	void (*control_write)(struct tag_CBUS_BOARD_INFO *board, uint8_t idx, uint8_t data);
+	uint16_t (*control_read)(struct tag_CBUS_BOARD_INFO *board, uint8_t idx);
 } CBUS_BOARD_INFO;
 
 typedef enum {
@@ -36,7 +37,7 @@ static uint8_t locked_base_addr[4] = {0};
 
 // ------------------------------------
 // function declaration
-void board86_control(CBUS_BOARD_INFO *board, uint8_t idx, uint16_t data);
+void board86_control(CBUS_BOARD_INFO *board, uint8_t idx, uint8_t data);
 
 
 uint32_t cbus_get_board_type(uint8_t slot)
@@ -91,7 +92,7 @@ uint16_t cbus_board_control_read(uint8_t slot, uint16_t idx)
 
 void cbus_board_init(uint8_t slot)
 {
-	uint16_t d=0;
+	uint8_t d=0;
 	
 	if (slot>=NMAXBOARDS)
 		return;
@@ -147,8 +148,8 @@ void cbus_board_init(uint8_t slot)
 		// OPNAマスク解除
 		// bit 1: YM2608(OPNA)マスク設定   : 0=non-mask / 1=OPNA masked
 		// bit 0: YM2608(OPNA)拡張部分機能 : 0=OPN / 1=OPNA
-		d = cbus_read(slot, 0xa460);
-		cbus_write(slot, 0xa460, (d&0xfc)|0x1);
+		d = cbus_read8(slot, 0xa460);
+		cbus_write8(slot, 0xa460, (d&0xfc)|0x1);
 
 		// volume control
 		board86_control(board, 0, 0);
@@ -161,16 +162,17 @@ void cbus_board_init(uint8_t slot)
 		break;
 		
 	case CBUS_BOARD_118:
+   		ymf297_opl3_init(&board->chip[1]);
 		break;
 
 	case CBUS_BOARD_SID98:
-        mos6581_init(&board->chip[0]);
-        mos6581_init(&board->chip[1]);
-        mos6581_init(&board->chip[2]);
-        mos6581_init(&board->chip[3]);
-        break;
+		mos6581_init(&board->chip[0]);
+		mos6581_init(&board->chip[1]);
+		mos6581_init(&board->chip[2]);
+		mos6581_init(&board->chip[3]);
+		break;
 
-    default:
+	default:
 		break;
 	}
 }
@@ -179,19 +181,19 @@ void cbus_board_init(uint8_t slot)
 // NOTE: ウエイト値確定前のチェック時用: ウエイトたっぷり
 static void chip_write(int bidx, uint16_t aport, uint16_t dport, uint8_t addr, uint8_t data)
 {
-	cbus_write(bidx, aport, addr); // I/O
+	cbus_write8(bidx, aport, addr); // I/O
     CyDelayUs(250);
-	cbus_write(bidx, dport, data); // I/O=IN, SSG DISABLE
+	cbus_write8(bidx, dport, data); // I/O=IN, SSG DISABLE
     CyDelayUs(250);
 }
 static uint8_t chip_read(int bidx, uint16_t aport, uint16_t dport, uint8_t addr)
 {
-	uint16_t x;
-	cbus_write(bidx, aport, addr);
+	uint8_t x;
+	cbus_write8(bidx, aport, addr);
     CyDelayUs(250);
-	x = cbus_read(bidx, dport);
+	x = cbus_read8(bidx, dport);
     CyDelayUs(250);
-	return x&0xff;
+	return x;
 }
 
 static uint8_t check_have26func(int idx, uint16_t base)
@@ -292,7 +294,7 @@ static uint32_t auto_detect(int idx)
 void cbus_board_setup(void)
 {
 	int timeridx = 0;
-	uint16_t d=0;
+	uint8_t d=0;
 
 	has_lowbit_decoder_board = 0;
 	for (int i=0; i<4; i++){
@@ -311,8 +313,8 @@ void cbus_board_setup(void)
 		// 自動判定
 		if (preferred_type == CBUS_BOARD_AUTO){
 			// read sound-id
-			uint16_t sid = cbus_read(i, 0xA460);
-			switch((sid&0xff)>>4){
+			uint8_t sid = cbus_read8(i, 0xA460);
+			switch(sid>>4){
 			case SOUND_86_018X:
 				type = CBUS_BOARD_86_0188H;
 				break;
@@ -326,7 +328,7 @@ void cbus_board_setup(void)
 				type = CBUS_BOARD_73_0288H;
 				break;
 			case SOUND_118:
-				type = CBUS_BOARD_118;
+		        type = CBUS_BOARD_118;
 				break;
 			default:
 				type = auto_detect(i);
@@ -497,8 +499,8 @@ void cbus_board_setup(void)
 			board->control_write = 0;
 
 			// OPNAマスク解除
-			d = cbus_read(i, 0xa460);
-			cbus_write(i, 0xa460, (d&0xfc)|0x1);
+			d = cbus_read8(i, 0xa460);
+			cbus_write8(i, 0xa460, (d&0xfc)|0x1);
 			// 初期化
 			ym2608_init(&board->chip[0]);
 			// ADPCM-RAM搭載判定
@@ -649,8 +651,8 @@ void cbus_board_setup(void)
 			// OPNAマスク解除
 			// bit 1: YM2608(OPNA)マスク設定   : 0=non-mask / 1=OPNA masked
 			// bit 0: YM2608(OPNA)拡張部分機能 : 0=OPN / 1=OPNA
-			d = cbus_read(i, 0xa460);
-			cbus_write(i, 0xa460, (d&0xfc)|0x1);
+			d = cbus_read8(i, 0xa460);
+			cbus_write8(i, 0xa460, (d&0xfc)|0x1);
 			// OPNA初期化
 			ym2608_init(&board->chip[0]);
 			// ADPCM-RAM搭載判定
@@ -688,8 +690,8 @@ void cbus_board_setup(void)
 			// OPNAマスク解除
 			// bit 1: YM2608(OPNA)マスク設定   : 0=non-mask / 1=OPNA masked
 			// bit 0: YM2608(OPNA)拡張部分機能 : 0=OPN / 1=OPNA
-			d = cbus_read(i, 0xa460);
-			cbus_write(i, 0xa460, (d&0xfc)|0x1);
+			d = cbus_read8(i, 0xa460);
+			cbus_write8(i, 0xa460, (d&0xfc)|0x1);
 
 			// FIXME:OPNAとして初期化
 			ym2608_init(&board->chip[0]);
@@ -719,10 +721,29 @@ void cbus_board_setup(void)
 
 		// ---------------------------------
 		case CBUS_BOARD_118:
-			board->nchips = 1;
+            while(1){
+			// 初期化(init118のぱくり)
+			board118_init(i);
+
+			// NOTE: OPN3モードにする方法がわからん・・・。
+			// change to OPNA-mode
+			d = cbus_read8(i, 0xa460); // SoundID
+			//cbus_write8(i, 0xa460, (d&0xfc)|0x1); // OPNAマスク解除
+			// OPL-modeの場合:
+			cbus_write8(i, 0xa460, (d&0xfc)|0x3); // OPNAマスク
+#if 0
+			for(int y=0; y<100; y++){ // MIDIチェック
+				cbus_write8(i, 0x148E, 0x00);
+				uint8_t status118 = cbus_read8(i, 0x148E);
+				if ((status118&0x08) == 0x00)
+					type = CBUS_BOARD_118;
+			}
+#endif
+timeridx = 0;
+			board->nchips = 2;
 			board->chip[0].slot = i;
-			// TODO: とりあえずOPNA側のみ対応。 OPL側どうすればいいかわからん。
-			board->chip[0].chiptype = CHIP_YMF297;
+			// OPNA-mode --------------
+			board->chip[0].chiptype = CHIP_YMF297_OPNA;
 			board->chip[0].areg_addr[0] = 0x188;
 			board->chip[0].areg_addr[1] = 0x18c;
 			board->chip[0].dreg_addr[0] = 0x18a;
@@ -734,6 +755,25 @@ void cbus_board_setup(void)
 			// FIXME:
 			board->chip[0].wait_timerif = &timerRes[timeridx++];
 			board->control_write = 0;
+
+			// OPL3-mode -------------
+			board->chip[1].slot = i;
+			board->chip[1].chiptype = CHIP_YMF297_OPL3;
+			board->chip[1].areg_addr[0] = 0x1488;
+			board->chip[1].dreg_addr[0] = 0x1489;
+			board->chip[1].areg_addr[1] = 0x148a;
+			board->chip[1].dreg_addr[1] = 0x148b;
+			// ウエイト値固定・テーブル無し（タイマは必要）
+			board->chip[1].waitidx = 0;
+			board->chip[1].waitdef = 0;
+			board->chip[1].writefunc = ymf297_opl3_write;
+			// FIXME:
+			board->chip[1].wait_timerif = &timerRes[timeridx++];
+			board->control_write = 0;
+            
+       		ymf297_opl3_init(&board->chip[1]);
+            CyDelay(2000);
+            }
 			break;
 
 		// YMF262 --------------------------------------
@@ -749,8 +789,9 @@ void cbus_board_setup(void)
 			board->chip[1].slot = i;
 			board->chip[1].chiptype = CHIP_YMF262;
 			{
+				//FIXME: IOポート未検証
 				// SB16: 2/4/6/8/a/c/eが選択出来るけど、とりあえず0x20d2のみ。
-				uint32_t base = 0x20d2;
+				uint32_t base = 0xc8d2;//0x20d2;
 				board->chip[1].areg_addr[0] = base + 0;
 				board->chip[1].dreg_addr[0] = base + 1;
 				board->chip[1].areg_addr[1] = base + 2;
@@ -818,9 +859,10 @@ void cbus_board_setup(void)
 				board->chip[k].chiptype = CHIP_MOS6581;
 				board->chip[k].dreg_addr[0] = base + (k*2);
 				board->chip[k].areg_addr[0] = base + (k*2) + 1;
+				// ウエイト不要
 				board->chip[k].waitidx = 0;
 				board->chip[k].waitdef = 0;
-				board->chip[k].wait_timerif = &timerRes[timeridx++];
+				board->chip[k].wait_timerif = 0;
 			}
 			
 			break;
@@ -855,7 +897,7 @@ void write_chip(uint8_t exaddr, uint8_t addr, uint8_t data)
 	chip->writefunc(chip, ex, addr, data);
 }
 
-void board86_control(CBUS_BOARD_INFO *board, uint8_t idx, uint16_t data)
+void board86_control(CBUS_BOARD_INFO *board, uint8_t idx, uint8_t data)
 {
 	//000b= VOL0(FM音源直接出力レベル)
 	//001b= VOL1(FM音源間接出力レベル)
@@ -867,6 +909,6 @@ void board86_control(CBUS_BOARD_INFO *board, uint8_t idx, uint16_t data)
 	if (4<idx) return;
 	if (15<data) data = 15;
 	
-	cbus_write(board->slot, 0xa466, vol_idx[idx]<<4 | data);
+	cbus_write8(board->slot, 0xa466, vol_idx[idx]<<4 | data);
 }
 

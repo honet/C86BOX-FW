@@ -86,6 +86,8 @@ typedef enum {
 	CHIP_YMF278B		= 0x0000d,
 	CHIP_YMZ280B		= 0x0000e,
 	CHIP_YMF297			= 0x0000f,
+	CHIP_YMF297_OPNA	= 0x0000f,
+	CHIP_YMF297_OPL3	= 0x2000f,
 	CHIP_YM2610B		= 0x00010,
 	CHIP_Y8950			= 0x00020,
 	CHIP_Y8950ADPCM 	= 0x10020,
@@ -119,6 +121,9 @@ void ym2608_write_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t 
 void ym2608_read_adpcm(CHIP_INFO *chip, uint16_t addr, uint8_t *data, uint16_t size);
 uint8_t ym2608_check_adpcm(CHIP_INFO *chip);
 void ym2608_init(CHIP_INFO *chip);
+
+void ymf297_opl3_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data);
+void ymf297_opl3_init(CHIP_INFO *chip);
 
 void mos6581_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data);
 void mos6581_init(CHIP_INFO *chip);

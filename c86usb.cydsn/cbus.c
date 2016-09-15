@@ -52,17 +52,33 @@ void cbus_reset(void)
 }
 
 
-void cbus_write(uint8_t slot, uint32_t addr, uint16_t data)
+void cbus_write8(uint8_t slot, uint32_t addr, uint8_t data)
 {
 	CBUSControl_BusyWait();
 	CBUS_SetAddr(slot, addr);
-	CBUSControl_Write(data);
+	CBUSControl_Write8((uint8_t)(addr&0x01), data);
 }
 
-uint16_t cbus_read(uint8_t slot, uint32_t addr)
+// 注意： unalignedアクセスした場合の結果は不定。
+void cbus_write16(uint8_t slot, uint32_t addr, uint16_t data)
 {
 	CBUSControl_BusyWait();
 	CBUS_SetAddr(slot, addr);
-	return CBUSControl_Read();
+	CBUSControl_Write16(data);
+}
+
+uint8_t cbus_read8(uint8_t slot, uint32_t addr)
+{
+	CBUSControl_BusyWait();
+	CBUS_SetAddr(slot, addr);
+	return CBUSControl_Read8((uint8_t)(addr&0x01));
+}
+
+// 注意： unalignedアクセスした場合の結果は不定。
+uint16_t cbus_read16(uint8_t slot, uint32_t addr)
+{
+	CBUSControl_BusyWait();
+	CBUS_SetAddr(slot, addr);
+	return CBUSControl_Read16();
 }
 

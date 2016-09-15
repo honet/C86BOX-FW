@@ -58,7 +58,7 @@ void ym2203_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 	chip->wait_timerif->Wait();
 
 	// write address ------------
-	cbus_write(chip->slot, chip->areg_addr[0], addr);
+	cbus_write8(chip->slot, chip->areg_addr[0], addr);
 	// set a after wait timer
 	waitidx = chip->waitidx[widx];
 	waitcount = chip->waitdef[waitidx&0x0f];
@@ -67,7 +67,7 @@ void ym2203_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 	chip->wait_timerif->Wait();
 
 	// write data --------------
-	cbus_write(chip->slot, chip->dreg_addr[0], data);
+	cbus_write8(chip->slot, chip->dreg_addr[0], data);
 	// set a after wait timer
 	waitcount = chip->waitdef[(waitidx>>4)&0x0f];
 	chip->wait_timerif->Set(waitcount);
@@ -91,17 +91,17 @@ void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 		
 		// ADPCMはウェイト無し
 		// write address
-		cbus_write(slot, areg, 0x08);
+		cbus_write8(slot, areg, 0x08);
 		// write data
-		cbus_write(slot, dreg, data);
+		cbus_write8(slot, dreg, data);
 		
 		// reset BRDY flag --------------
-		cbus_write(slot, areg, OPNA_ADPCM_FLAG_REG);
-		cbus_write(slot, dreg,
+		cbus_write8(slot, areg, OPNA_ADPCM_FLAG_REG);
+		cbus_write8(slot, dreg,
 						OPNA_ADPCM_FLAG_BIT_MASK_ALL & ~OPNA_ADPCM_FLAG_BIT_MASK_EOS );
 		
 		// enable BRDY and EOS flag. ----
-		cbus_write(slot, dreg,
+		cbus_write8(slot, dreg,
 						OPNA_ADPCM_FLAG_BIT_MASK_ALL &
 						~( OPNA_ADPCM_FLAG_BIT_MASK_BRDY |
 						   OPNA_ADPCM_FLAG_BIT_MASK_EOS ) );
@@ -124,7 +124,7 @@ void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 		}
 
 		// write address ------------
-		cbus_write(slot, chip->areg_addr[ex], addr);
+		cbus_write8(slot, chip->areg_addr[ex], addr);
 		// set a after wait timer
 		waitidx = chip->waitidx[widx];
 		waitcount = chip->waitdef[waitidx&0x0f];
@@ -133,7 +133,7 @@ void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 		chip->wait_timerif->Wait();
 
 		// write data --------------
-		cbus_write(slot, chip->dreg_addr[ex], data);
+		cbus_write8(slot, chip->dreg_addr[ex], data);
 		// set a after wait timer
 		waitcount = chip->waitdef[(waitidx>>4)&0x0f];
 		chip->wait_timerif->Set(waitcount);
@@ -149,7 +149,7 @@ uint8_t ym2608_read(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr)
 	uint16_t waitcount;
 	
 	// write address ------------
-	cbus_write(chip->slot, chip->areg_addr[ex], addr);
+	cbus_write8(chip->slot, chip->areg_addr[ex], addr);
 	// set a after wait timer
 	waitidx = chip->waitidx[widx];
 	waitcount = chip->waitdef[waitidx&0x0f];
@@ -158,12 +158,12 @@ uint8_t ym2608_read(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr)
 	chip->wait_timerif->Wait();
 
 	// read data はウエイトいらないよね？
-	return (cbus_read(chip->slot, chip->dreg_addr[ex]) & 0xff);
+	return (cbus_read8(chip->slot, chip->dreg_addr[ex]) & 0xff);
 }
 
 uint8_t ym2608_read_status(CHIP_INFO *chip, uint8_t ex)
 {
-	return (cbus_read(chip->slot, chip->areg_addr[ex]) & 0xff);
+	return (cbus_read8(chip->slot, chip->areg_addr[ex]) & 0xff);
 }
 
 // ------------------------------------
@@ -432,6 +432,55 @@ uint8_t ym2608_check_adpcm(CHIP_INFO *chip)
 	return flag;
 }
 
+// --------------------------------------------------------------------------
+void ymf297_opl3_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
+{
+	uint8_t ex = exaddr&0x01;
+	uint8_t slot = chip->slot;
+
+	chip->wait_timerif->Wait();
+
+	// write address ------------
+	cbus_write8(slot, chip->areg_addr[ex], addr);
+	// set a after wait timer
+	// at reast 1.89us(min) @ Mclk=16.9344MHz (32clk)
+	chip->wait_timerif->Set(24); //about 3us
+	
+	chip->wait_timerif->Wait();
+	
+	// write data --------------
+	cbus_write8(slot, chip->dreg_addr[ex], data);
+	// set a after wait timer
+	// at reast 1.89us(min) @ Mclk=16.9344MHz (32clk)
+	chip->wait_timerif->Set(24); //about 3us
+}
+
+void ymf297_opl3_init(CHIP_INFO *chip)
+{
+	//int i=0;
+	ymf297_opl3_write(chip, 1, 0x05, 0x5); // NEW,NEW3
+	ymf297_opl3_write(chip, 0, 0xF7, 0x0); // switch to OPL3 mode.
+
+	ymf297_opl3_write(chip, 0, 0x04, 0xe0); // RESET, Mute Timer1&2
+
+	//ymf297_opl3_write(chip, 0, 0x01, 0x20);//ENABLE_WAVE_SELECT
+
+	// --------------------------------------
+	// set tone parameter (forTEST)
+	for(int ch=0;ch<6;ch++){
+		ymf297_opl3_write(chip, 0, 0x20+ch, 0x01);
+		ymf297_opl3_write(chip, 0, 0x40+ch, 0x00); //TL=0
+		ymf297_opl3_write(chip, 0, 0x60+ch, 0xf2); // AR,DR
+		ymf297_opl3_write(chip, 0, 0x80+ch, 0x22); // SL,RR
+		ymf297_opl3_write(chip, 0, 0xe0+ch, 0x00); // WS
+	}
+	ymf297_opl3_write(chip, 0, 0xa0, 0x46); // F-NUMBER(L)
+	ymf297_opl3_write(chip, 0, 0xc0, 0xf0); // CH-sel, FB, CNT
+
+	// KEY OFF->ON
+	ymf297_opl3_write(chip, 0, 0xb0, 0x00 | (0x04<<2)| 0x02); // KEYOFF, BLOCK, F-NUMBER(L)
+	ymf297_opl3_write(chip, 0, 0xb0, 0x30 | (0x04<<2)| 0x02); // KEYON, BLOCK, F-NUMBER(L)
+}
 
 // --------------------------------------------------------------------------
 // exaddr = [7:4]slot,[3:1]chip,[0:0]ex
@@ -439,9 +488,9 @@ void mos6581_write(CHIP_INFO *chip, uint8_t exaddr __unused, uint8_t addr, uint8
 {
     // ウエイト無し
 	// write address ------------
-	cbus_write(chip->slot, chip->areg_addr[0], addr);
+	cbus_write8(chip->slot, chip->areg_addr[0], addr);
 	// write data --------------
-	cbus_write(chip->slot, chip->dreg_addr[0], data);
+	cbus_write8(chip->slot, chip->dreg_addr[0], data);
 }
 
 void mos6581_init(CHIP_INFO *chip)
