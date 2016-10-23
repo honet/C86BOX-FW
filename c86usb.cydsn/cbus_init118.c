@@ -20,7 +20,7 @@ static void initOPL(uint8_t bidx)
 
 	for (int i=0; i<5; i++) {
 		cbus_write8(bidx, 0x0485, Data0485_99[i]);
-		cbus_write8(bidx, 0x5f, 0x00);
+        CyDelayUs(1);//cbus_write8(bidx, 0x5f, 0x00);
 	}
 
 	/* 処理終了 */
@@ -40,7 +40,7 @@ static void initOPL(uint8_t bidx)
 	/* 処理終了 */
 	cbus_write8(bidx, 0x0485+1,0x00);
 
-	CyDelayUs(1200); //wait(2000);
+	CyDelayUs(1500); //wait(2000);
 
 
 	if (cnt != 0) {
@@ -50,13 +50,13 @@ static void initOPL(uint8_t bidx)
 
 		for (int i=0; i<14; i++){
 			cbus_write8(bidx, 0x0485, Data0485_36[i]);
-			cbus_write8(bidx, 0x5f, 0x00);
+    		CyDelayUs(1);//cbus_write8(bidx, 0x5f, 0x00);
 		}
 
 		/* 処理終了 */
 		cbus_write8(bidx, 0x0485+1,0x00);
 
-		CyDelayUs(900); //wait(1500);
+		CyDelayUs(1200); //wait(1500);
 
 		cbus_write8(bidx, 0x148e, 0x05);
 		cnt = cbus_read8(bidx, 0x148f) | 0x08;
@@ -67,7 +67,7 @@ static void initOPL(uint8_t bidx)
 		cnt=cbus_read8(bidx, 0x148f) & 0xf7;
 		cbus_write8(bidx, 0x148f, cnt);
 
-		CyDelayUs(900); //wait(1500);
+		CyDelayUs(1200); //wait(1500);
 	}
 
 	cbus_write8(bidx, 0x0485, 0xaa);
@@ -76,11 +76,12 @@ static void initOPL(uint8_t bidx)
 
 	for (int i=0; i<3159; i++){
 		cbus_write8(bidx, 0x0485, Data0485_A9[i]);
-		cbus_write8(bidx, 0x5f, 0x00);
+        CyDelayUs(1);	//cbus_write8(bidx, 0x5f, 0x00);
 	}
 	/* 処理終了 */
 	cbus_write8(bidx, 0x0485+1, 0x00);
 
+    CyDelayUs(1200); //wait(1500);
 
 	cbus_write8(bidx, 0x0485, 0xaa);
 	cbus_write8(bidx, 0x0485, 0x0c);
@@ -88,7 +89,7 @@ static void initOPL(uint8_t bidx)
 
 	for (int i=0; i<3; i++){
 		cbus_write8(bidx, 0x0485, Data0485_0C[i]);
-		cbus_write8(bidx, 0x5f, 0x00);
+        CyDelayUs(1); //cbus_write8(bidx, 0x5f, 0x00);
 	}
 	/* 処理終了 */
 	cbus_write8(bidx, 0x0485+1, 0x00);
@@ -100,7 +101,7 @@ static void initOPL(uint8_t bidx)
 
 	for (int i=0; i<6; i++) {
 		cbus_write8(bidx, 0x0485, Data0485_66[i]);
-		cbus_write8(bidx, 0x5f, 0x00);
+   		CyDelayUs(1); //cbus_write8(bidx, 0x5f, 0x00);
 	}
 	/* 処理終了 */
 	cbus_write8(bidx, 0x0485+1, 0x00);
@@ -112,7 +113,7 @@ static void initOPL(uint8_t bidx)
 
 	for (int i=0; i<3; i++) {
 		cbus_write8(bidx, 0x0485, Data0485_60[i]);
-		cbus_write8(bidx, 0x5f, 0x00);
+   		CyDelayUs(1); //cbus_write8(bidx, 0x5f, 0x00);
 	}
 	/* 処理終了 */
 	cbus_write8(bidx, 0x0485+1, 0x00);
@@ -217,11 +218,13 @@ void board118_init(uint8_t slot){
 		// 118存在チェック失敗
 		return;
 	}
-	
-	if (!mode118(slot)) {
-		// 118設定失敗
-		return;
-	}
+
+    // 118がハングアップしてIORDYがアサートされっぱなしになってしまうので断念。
+    // なにやってるか不明だし、OPNA/OPL3についてはやらなくても音出るみたいなのでまあいいか。
+//	if (!mode118(slot)) {
+//		// 118設定失敗
+//		return;
+//	}
 	
 	setUART(slot);
 }

@@ -1,6 +1,8 @@
 
 #include <project.h>
-#include "CBUSControl_ctrlapi.h"
+//#include "CBUSControl_ctrlapi.h"
+#include "CBUSDOut_doutapi.h"
+#include "CBUSDIn_dinapi.h"
 #include "cbus.h"
 
 /* ------------------------
@@ -46,7 +48,7 @@ static void CBUS_SetAddr(uint8_t slot, uint32_t addr)
 void cbus_reset(void)
 {
 	DigitalReset_Write(1);
-	CyDelayUs(1000);
+	CyDelay(10);
 	DigitalReset_Write(0);
 	CyDelay(1000);
 }
@@ -54,31 +56,35 @@ void cbus_reset(void)
 
 void cbus_write8(uint8_t slot, uint32_t addr, uint8_t data)
 {
-	CBUSControl_BusyWait();
+	CBusDIn_BusyWait();
+    CBusDOut_BusyWait();
 	CBUS_SetAddr(slot, addr);
-	CBUSControl_Write8((uint8_t)(addr&0x01), data);
+	CBusDOut_Write8(data);
 }
 
 // 注意： unalignedアクセスした場合の結果は不定。
 void cbus_write16(uint8_t slot, uint32_t addr, uint16_t data)
 {
-	CBUSControl_BusyWait();
+	CBusDIn_BusyWait();
+    CBusDOut_BusyWait();
 	CBUS_SetAddr(slot, addr);
-	CBUSControl_Write16(data);
+    CBusDOut_Write16(data);
 }
 
 uint8_t cbus_read8(uint8_t slot, uint32_t addr)
 {
-	CBUSControl_BusyWait();
+    CBusDOut_BusyWait();
+	CBusDIn_BusyWait();
 	CBUS_SetAddr(slot, addr);
-	return CBUSControl_Read8((uint8_t)(addr&0x01));
+	return CBusDIn_Read8();
 }
 
 // 注意： unalignedアクセスした場合の結果は不定。
 uint16_t cbus_read16(uint8_t slot, uint32_t addr)
 {
-	CBUSControl_BusyWait();
+    CBusDOut_BusyWait();
+	CBusDIn_BusyWait();
 	CBUS_SetAddr(slot, addr);
-	return CBUSControl_Read16();
+	return CBusDIn_Read16();
 }
 

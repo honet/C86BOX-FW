@@ -123,7 +123,8 @@ uint8_t ym2608_check_adpcm(CHIP_INFO *chip);
 void ym2608_init(CHIP_INFO *chip);
 
 void ymf297_opl3_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data);
-void ymf297_opl3_init(CHIP_INFO *chip);
+void ymf262_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data);
+void opl3_init(CHIP_INFO *chip);
 
 void mos6581_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data);
 void mos6581_init(CHIP_INFO *chip);

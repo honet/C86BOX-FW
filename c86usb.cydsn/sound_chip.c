@@ -443,8 +443,35 @@ void ymf297_opl3_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t da
 	// write address ------------
 	cbus_write8(slot, chip->areg_addr[ex], addr);
 	// set a after wait timer
+	// we need wait>1.89us @ Mclk=16.9344MHz (32clk)
+	chip->wait_timerif->Set(80); // about 2.0us(16clk) @8MHz
+	
+	chip->wait_timerif->Wait();
+    
+    //for(uint8_t i; i<36; i++)
+    //    cbus_read8(slot, chip->areg_addr[0]);
+	
+	// write data --------------
+	cbus_write8(slot, chip->dreg_addr[ex], data);
+	// set a after wait timer
+	// we need wait>1.89us @ Mclk=16.9344MHz (32clk)
+	chip->wait_timerif->Set(80);
+    
+    //for(uint8_t i; i<36; i++)
+    //    cbus_read8(slot, chip->areg_addr[0]);
+}
+void ymf262_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
+{
+	uint8_t ex = exaddr&0x01;
+	uint8_t slot = chip->slot;
+
+	chip->wait_timerif->Wait();
+
+	// write address ------------
+	cbus_write8(slot, chip->areg_addr[ex], addr);
+	// set a after wait timer
 	// at reast 1.89us(min) @ Mclk=16.9344MHz (32clk)
-	chip->wait_timerif->Set(24); //about 3us
+	chip->wait_timerif->Set(240); //about 3us
 	
 	chip->wait_timerif->Wait();
 	
@@ -452,35 +479,39 @@ void ymf297_opl3_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t da
 	cbus_write8(slot, chip->dreg_addr[ex], data);
 	// set a after wait timer
 	// at reast 1.89us(min) @ Mclk=16.9344MHz (32clk)
-	chip->wait_timerif->Set(24); //about 3us
+	chip->wait_timerif->Set(240); //about 3us
 }
 
-void ymf297_opl3_init(CHIP_INFO *chip)
+void opl3_init(CHIP_INFO *chip)
 {
 	//int i=0;
-	ymf297_opl3_write(chip, 1, 0x05, 0x5); // NEW,NEW3
-	ymf297_opl3_write(chip, 0, 0xF7, 0x0); // switch to OPL3 mode.
+    chip->writefunc(chip, 1, 0x05, 0x5); // NEW,NEW3
+    if (chip->chiptype == CHIP_YMF297_OPL3)
+    	chip->writefunc(chip, 0, 0xF7, 0x0); // switch to OPL3 mode.
 
-	ymf297_opl3_write(chip, 0, 0x04, 0xe0); // RESET, Mute Timer1&2
+	chip->writefunc(chip, 0, 0x04, 0xe0); // RESET, Mute Timer1&2
 
 	//ymf297_opl3_write(chip, 0, 0x01, 0x20);//ENABLE_WAVE_SELECT
 
-	// --------------------------------------
-	// set tone parameter (forTEST)
-	for(int ch=0;ch<6;ch++){
-		ymf297_opl3_write(chip, 0, 0x20+ch, 0x01);
-		ymf297_opl3_write(chip, 0, 0x40+ch, 0x00); //TL=0
-		ymf297_opl3_write(chip, 0, 0x60+ch, 0xf2); // AR,DR
-		ymf297_opl3_write(chip, 0, 0x80+ch, 0x22); // SL,RR
-		ymf297_opl3_write(chip, 0, 0xe0+ch, 0x00); // WS
-	}
-	ymf297_opl3_write(chip, 0, 0xa0, 0x46); // F-NUMBER(L)
-	ymf297_opl3_write(chip, 0, 0xc0, 0xf0); // CH-sel, FB, CNT
+    {
+    	// --------------------------------------
+    	// set tone parameter (forTEST)
+    	for(int ch=0;ch<6;ch++){
+    		chip->writefunc(chip, 1, 0x20+ch, 0x01);
+    		chip->writefunc(chip, 1, 0x40+ch, 0x00); //TL=0
+    		chip->writefunc(chip, 1, 0x60+ch, 0xf2); // AR,DR
+    		chip->writefunc(chip, 1, 0x80+ch, 0x22); // SL,RR
+    		chip->writefunc(chip, 1, 0xe0+ch, 0x00); // WS
+    	}
+    	chip->writefunc(chip, 1, 0xa0, 0x46); // F-NUMBER(L)
+    	chip->writefunc(chip, 1, 0xc0, 0xf0); // CH-sel, FB, CNT
 
-	// KEY OFF->ON
-	ymf297_opl3_write(chip, 0, 0xb0, 0x00 | (0x04<<2)| 0x02); // KEYOFF, BLOCK, F-NUMBER(L)
-	ymf297_opl3_write(chip, 0, 0xb0, 0x30 | (0x04<<2)| 0x02); // KEYON, BLOCK, F-NUMBER(L)
+    	// KEY OFF->ON
+    	chip->writefunc(chip, 1, 0xb0, 0x00 | (0x04<<2)| 0x02); // KEYOFF, BLOCK, F-NUMBER(L)
+    	chip->writefunc(chip, 1, 0xb0, 0x30 | (0x04<<2)| 0x02); // KEYON, BLOCK, F-NUMBER(L)
+    }
 }
+
 
 // --------------------------------------------------------------------------
 // exaddr = [7:4]slot,[3:1]chip,[0:0]ex

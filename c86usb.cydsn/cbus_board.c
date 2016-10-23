@@ -162,7 +162,7 @@ void cbus_board_init(uint8_t slot)
 		break;
 		
 	case CBUS_BOARD_118:
-   		ymf297_opl3_init(&board->chip[1]);
+   		opl3_init(&board->chip[1]);
 		break;
 
 	case CBUS_BOARD_SID98:
@@ -309,6 +309,12 @@ void cbus_board_setup(void)
 		
 		uint32_t preferred_type = conf_get_board_type(i);
 		uint32_t type = preferred_type;
+
+        // DEBUG!!!!!!!!!!!!!!
+//        if(i==0){
+//            preferred_type = CBUS_BOARD_SB16;
+//            type = preferred_type;
+//        }
 		
 		// 自動判定
 		if (preferred_type == CBUS_BOARD_AUTO){
@@ -721,7 +727,6 @@ void cbus_board_setup(void)
 
 		// ---------------------------------
 		case CBUS_BOARD_118:
-            while(1){
 			// 初期化(init118のぱくり)
 			board118_init(i);
 
@@ -739,7 +744,6 @@ void cbus_board_setup(void)
 					type = CBUS_BOARD_118;
 			}
 #endif
-timeridx = 0;
 			board->nchips = 2;
 			board->chip[0].slot = i;
 			// OPNA-mode --------------
@@ -771,15 +775,12 @@ timeridx = 0;
 			board->chip[1].wait_timerif = &timerRes[timeridx++];
 			board->control_write = 0;
             
-       		ymf297_opl3_init(&board->chip[1]);
-            CyDelay(2000);
-            }
+       		opl3_init(&board->chip[1]);
+            //CyDelay(2000);
 			break;
 
 		// YMF262 --------------------------------------
 		// いろいろ未検証
-		case CBUS_BOARD_SB16:
-		case CBUS_BOARD_SB16VALUE:
 		case CBUS_BOARD_POWERWINDOW_T64S:
 		case CBUS_BOARD_PCSB2:
 		case CBUS_BOARD_WGS98S:
@@ -789,8 +790,7 @@ timeridx = 0;
 			board->chip[1].slot = i;
 			board->chip[1].chiptype = CHIP_YMF262;
 			{
-				//FIXME: IOポート未検証
-				// SB16: 2/4/6/8/a/c/eが選択出来るけど、とりあえず0x20d2のみ。
+				//FIXME: IOポート未検証 ->SB16と一緒かなぁ？？？？
 				uint32_t base = 0xc8d2;//0x20d2;
 				board->chip[1].areg_addr[0] = base + 0;
 				board->chip[1].dreg_addr[0] = base + 1;
@@ -804,47 +804,56 @@ timeridx = 0;
 			board->chip[1].wait_timerif = &timerRes[timeridx++];
 			break;
 
+		// YMF262 + YM2203 --------------------------------------
+		case CBUS_BOARD_SB16:
+		case CBUS_BOARD_SB16VALUE:
 		case CBUS_BOARD_SB16_2203_0188H:
 		case CBUS_BOARD_SB16_2203_0088H:
 			board->nchips = 1;
-			board->control_write = 0;
 			board->chip[0].slot = i;
-			board->chip[0].chiptype = CHIP_YM2203;
-			if (type==CBUS_BOARD_SB16_2203_0088H){
-				board->chip[0].areg_addr[0] = 0x088;
-				board->chip[0].dreg_addr[0] = 0x08a;
-			}else{
-				board->chip[0].areg_addr[0] = 0x188;
-				board->chip[0].dreg_addr[0] = 0x18a;
-			}
-			// FIXME: たぶんウエイト違うけど、資料が無い。
+			board->chip[0].chiptype = CHIP_YMF262;
+			board->chip[0].areg_addr[0] = 0xC8D2;
+			board->chip[0].dreg_addr[0] = 0xC9D2;
+			board->chip[0].areg_addr[1] = 0xCAD2;
+			board->chip[0].dreg_addr[1] = 0xCBD2;
+			// FIXME: ウエイト違う.
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2203_MC4[0];
-			board->chip[0].writefunc = ym2203_write;
+			board->chip[0].writefunc = ymf262_write;
 			board->chip[0].wait_timerif = &timerRes[timeridx++];
-			
+            
 			if(timeridx>=NTIMERS)
 				break;
 			
-			board->nchips = 2;
-			board->chip[1].slot = i;
-			board->chip[1].chiptype = CHIP_YMF262;
-			{
-				// 2/4/6/8/a/c/eが選択出来るけど、とりあえず0x20d2のみ。
-				uint32_t base = 0x20d2;
-				board->chip[1].areg_addr[0] = base + 0;
-				board->chip[1].dreg_addr[0] = base + 1;
-				board->chip[1].areg_addr[1] = base + 2;
-				board->chip[1].dreg_addr[1] = base + 3;
-			}
-			// FIXME: ウエイト違う.
-			board->chip[1].waitidx = &waitidx_2608[0];
-			board->chip[1].waitdef = &waitdef_2608[0];
-			// FIXME
-			board->chip[1].writefunc = ym2608_write;
-			board->chip[1].wait_timerif = &timerRes[timeridx++];
-			break;
+    		// have 2203? ---------------------
+            if(type!=CBUS_BOARD_SB16VALUE){
+                uint16_t base = 0;
+    			if (type==CBUS_BOARD_SB16_2203_0088H) base = 0x88;
+    			else if (type==CBUS_BOARD_SB16_2203_0188H) base = 0x188;
+    	    	else if (check_have26func(i, 0x088)) base = 0x88;
+    	    	else if (check_have26func(i, 0x188)) base = 0x188;
+                
+    	    	if (base){
+        			board->nchips = 2;
+        			board->chip[1].slot = i;
+        			board->chip[1].chiptype = CHIP_YM2203;
+       				board->chip[1].areg_addr[0] = base;
+       				board->chip[1].dreg_addr[0] = base + 4;
+       				board->chip[1].areg_addr[1] = base + 2;
+       				board->chip[1].dreg_addr[1] = base + 6;
+        			// FIXME: ウエイト違う.
+        			board->chip[1].waitidx = &waitidx_2608[0];
+    	    		board->chip[1].waitdef = &waitdef_2203_MC4[0];
+    		    	board->chip[1].writefunc = ym2203_write;
+        			board->chip[1].wait_timerif = &timerRes[timeridx++];
 
+                    locked_base_addr[base==0x088?0:1] = 1;
+        			has_lowbit_decoder_board = 1;
+                }
+            }
+       		opl3_init(&board->chip[0]);
+            break;
+            
 		// SID98 ----------------------------------------------------
 		// 俺ボード
 		case CBUS_BOARD_SID98:
