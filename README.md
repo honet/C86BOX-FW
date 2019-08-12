@@ -3,6 +3,7 @@
 Firmware for C86BOX (NEC PC-98Series C-BUS to USB Bridge BOX).   
 
 C86BOX http://c86box.com/ の内部ファームウェアです。
+PSoC Creator 用のプロジェクトファイルです。
 
 
 ## 関連ソフト
