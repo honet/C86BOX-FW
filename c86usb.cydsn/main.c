@@ -16,6 +16,7 @@
 #include "eeprom_config.h"
 #include "usb_vendor_request.h"
 #include "sidbench.h"
+#include "tick.h"
 
 // MESSAGE DEFINITION ------------------------------------------------------
 // 00 [7:4]slot,[3:1]chip,[0:0]ex addr data
@@ -27,7 +28,8 @@
 // f0 sa aa aa  C-BUS address set for data write : aa=addr[19:0]
 // f1 s0 dd dd  CBUS data write : s=slot no
 // f2 sa aa aa  CBUS data read
-// FE nn nn nn  nsync
+// FD nn nn nn  ntick wait
+// FE nn nn nn  (deprecated) 1ms*nsync
 
 #define MSGBUF_SIZE      1024//(1024*8) // must be equal to 2^n
 #define MSGBUF_SIZEMASK  (MSGBUF_SIZE-1)
@@ -38,7 +40,9 @@ volatile uint32_t msgbuf[MSGBUF_SIZE];
 volatile uint32_t msg_widx;
 volatile uint32_t msg_ridx;
 volatile uint32_t msg_length;
-volatile uint8_t ticked = 0;
+
+volatile uint64_t last_tick;
+volatile uint64_t next_tick;
 
 uint8_t SNStringDesc[128];
 
@@ -51,6 +55,11 @@ uint8_t SNStringDesc[128];
 #define REMAIN()	(MSGBUF_SIZE - msg_length)
 
 // -------------------------------------
+#define LEDID_POWER     0
+#define LEDID_CONNECT   1
+#define LEDID_DATAA     2
+#define LEDID_DATAB     3
+
 static uint8_t ledval = 0xff;
 void led_init(){
 	LEDControl_Write(0xff);
@@ -70,18 +79,15 @@ void led_set(uint8_t idx, uint8_t sw){
 
 // ----------------------------------------
 
-CY_ISR(Tick)
-{
-	ticked = 1;
-	// clear sticky bits.
-	TickTimer_ReadStatusRegister();
-}
-
 void ProcessData()
 {
 	static uint16_t cbus_addr = 0;
+    
+    uint64_t tick = GetTick();
+    if (tick<next_tick)
+        return;
 
-	if(ticked && msg_length>0){
+	if(msg_length>0){
 		uint32_t d = msgbuf[IDX(msg_ridx)];
 		uint8_t cmd = d>>24;
 
@@ -101,7 +107,19 @@ void ProcessData()
                 msg_length--;
 				break;
 			}
-
+            
+        case 0xfd:
+			if(d&0xffffff){
+                // タイミングの基準は前回sync時の値。現在値ではない。
+                next_tick = next_tick + (d&0xffffff);
+            }else{
+                // n=0なら現在カウンタ値と同期させる
+                next_tick = tick;
+            }
+			msg_ridx++;
+            msg_length--;
+            break;
+#if 0
 		case 0xfe:
 			// sync
 			if(d&0xffffff){
@@ -113,8 +131,8 @@ void ProcessData()
 				msg_ridx++;
                 msg_length--;
 			}
-            ticked = 0;
 			break;
+#endif
 
 		case 0x10: // 10 cc dd dd  slot.A write control : cc=control no, dd=data
 			cbus_board_control_write(0, (d>>16)&0xff, d&0xffff);
@@ -231,20 +249,15 @@ static void _ReadDieID(uint8 descr[])
 // -------------------------------------
 int main()
 {
-	EEPROM_Start();
-	led_init();
-    
-	led_on(0);
-
-	cbus_reset();
-	cbus_board_setup();
-
-//    while(1) sidbench();
-	
 	msg_widx = 0;
 	msg_ridx = 0;
     msg_length = 0;
+    last_tick = 0;
 
+    EEPROM_Start();
+	led_init();
+	led_on(LEDID_POWER);
+	
 	// generage USB S/N string descriptor
 	_ReadDieID(SNStringDesc);
 	USBFS_SerialNumString(SNStringDesc);
@@ -252,11 +265,13 @@ int main()
     /* Enable global interrupts */
 	CYGlobalIntEnable;
 
-	// setup
-	TickTimerISR_StartEx(Tick);
-	TickTimer_Start();
+    // setup
+    TickSetup();
+	cbus_reset();
+	cbus_board_setup();
+//    while(1) sidbench();
 
-	// board init.
+	// wait board init.
 	while(0<msg_length);
 
 	// start the USB.
@@ -269,7 +284,7 @@ int main()
 		if (USBFS_GetConfiguration() != 0){
 			if (USBFS_IsConfigurationChanged() != 0){
 				USBFS_EnableOutEP(USB_OUT_EP);
-				led_on(1);
+				led_on(LEDID_CONNECT);
 			}
 
 			BulkTransfer();
@@ -294,7 +309,7 @@ int main()
 				}
 			}
 		}else{
-			led_off(1);
+			led_off(LEDID_CONNECT);
 		}
 	}
 

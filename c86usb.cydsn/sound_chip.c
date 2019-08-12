@@ -1,8 +1,8 @@
 #include <project.h>
 #include <stdint.h>
-#include "timer_if.h"
 #include "cbus.h"
 #include "sound_chip.h"
+#include "tick.h"
 
 // TODO: だいぶいい加減なので直す（OPNとっても遅いよ！）
 const uint16_t waitdef_2203_MC4[5] = { 100,120,150,200,1152 };
@@ -45,7 +45,6 @@ const uint8_t waitidx_2608[512] = {
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
 };
 
-
 // exaddr = [7:4]slot,[3:1]chip,[0:0]ex
 void ym2203_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 {
@@ -55,22 +54,22 @@ void ym2203_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 	uint16_t waitcount;
 
 	// wait
-	chip->wait_timerif->Wait();
+    TickWait(chip->next_tick);
 
 	// write address ------------
 	cbus_write8(chip->slot, chip->areg_addr[0], addr);
 	// set a after wait timer
 	waitidx = chip->waitidx[widx];
 	waitcount = chip->waitdef[waitidx&0x0f];
-	chip->wait_timerif->Set(waitcount);
 	// wait
-	chip->wait_timerif->Wait();
+    chip->next_tick = GetTick() + waitcount;
+    TickWait(chip->next_tick);
 
 	// write data --------------
 	cbus_write8(chip->slot, chip->dreg_addr[0], data);
 	// set a after wait timer
 	waitcount = chip->waitdef[(waitidx>>4)&0x0f];
-	chip->wait_timerif->Set(waitcount);
+    chip->next_tick = GetTick() + waitcount;
 }
 
 // exaddr = [7:4]slot,[3:1]chip,[0:0]ex
@@ -83,7 +82,7 @@ void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 	uint16_t waitcount;
 
 	// wait
-	chip->wait_timerif->Wait();
+    TickWait(chip->next_tick);
 
 	if (ex==1 && addr==0x08){
 		uint32_t areg = chip->areg_addr[1];
@@ -111,16 +110,16 @@ void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 			volatile uint8_t status = ym2608_read_status( chip, 1 );
 			if( status & OPNA_STATUS_BIT_BRDY )
 				break;
-			chip->wait_timerif->Set(100);
-			chip->wait_timerif->Wait();
+            chip->next_tick = GetTick() + 100;
+            TickWait(chip->next_tick);
 		}
 	}
 	else{
 		// CHECK ME!!
 		// リズムイベント発行前に強制ウェイトを入れないとなぜかtomtomが暴発する。
 		if( ex==0 && addr==0x10 ){
-			chip->wait_timerif->Set(1000);
-			chip->wait_timerif->Wait();
+            chip->next_tick = GetTick() + 1000;
+            TickWait(chip->next_tick);
 		}
 
 		// write address ------------
@@ -128,15 +127,15 @@ void ym2608_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 		// set a after wait timer
 		waitidx = chip->waitidx[widx];
 		waitcount = chip->waitdef[waitidx&0x0f];
-		chip->wait_timerif->Set(waitcount);
 		// wait
-		chip->wait_timerif->Wait();
+        chip->next_tick = GetTick() + waitcount;
+        TickWait(chip->next_tick);
 
 		// write data --------------
 		cbus_write8(slot, chip->dreg_addr[ex], data);
 		// set a after wait timer
 		waitcount = chip->waitdef[(waitidx>>4)&0x0f];
-		chip->wait_timerif->Set(waitcount);
+        chip->next_tick = GetTick() + waitcount;
 	}
 }
 
@@ -147,15 +146,17 @@ uint8_t ym2608_read(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr)
 	uint16_t widx = ((uint16_t)ex<<8) | addr;
 	uint8_t  waitidx;
 	uint16_t waitcount;
-	
+
+    TickWait(chip->next_tick);
+    
 	// write address ------------
 	cbus_write8(chip->slot, chip->areg_addr[ex], addr);
 	// set a after wait timer
 	waitidx = chip->waitidx[widx];
 	waitcount = chip->waitdef[waitidx&0x0f];
-	chip->wait_timerif->Set(waitcount);
 	// wait
-	chip->wait_timerif->Wait();
+    chip->next_tick = GetTick() + waitcount;
+    TickWait(chip->next_tick);
 
 	// read data はウエイトいらないよね？
 	return (cbus_read8(chip->slot, chip->dreg_addr[ex]) & 0xff);
@@ -438,15 +439,14 @@ void ymf297_opl3_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t da
 	uint8_t ex = exaddr&0x01;
 	uint8_t slot = chip->slot;
 
-	chip->wait_timerif->Wait();
+    TickWait(chip->next_tick);
 
 	// write address ------------
 	cbus_write8(slot, chip->areg_addr[ex], addr);
 	// set a after wait timer
 	// we need wait>1.89us @ Mclk=16.9344MHz (32clk)
-	chip->wait_timerif->Set(80); // about 2.0us(16clk) @8MHz
-	
-	chip->wait_timerif->Wait();
+    chip->next_tick = GetTick() + 16; // about 2.0us(16clk) @8MHz
+    TickWait(chip->next_tick);
     
     //for(uint8_t i; i<36; i++)
     //    cbus_read8(slot, chip->areg_addr[0]);
@@ -455,7 +455,7 @@ void ymf297_opl3_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t da
 	cbus_write8(slot, chip->dreg_addr[ex], data);
 	// set a after wait timer
 	// we need wait>1.89us @ Mclk=16.9344MHz (32clk)
-	chip->wait_timerif->Set(80);
+    chip->next_tick = GetTick() + 16;
     
     //for(uint8_t i; i<36; i++)
     //    cbus_read8(slot, chip->areg_addr[0]);
@@ -465,21 +465,20 @@ void ymf262_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 	uint8_t ex = exaddr&0x01;
 	uint8_t slot = chip->slot;
 
-	chip->wait_timerif->Wait();
+    TickWait(chip->next_tick);
 
 	// write address ------------
 	cbus_write8(slot, chip->areg_addr[ex], addr);
 	// set a after wait timer
 	// at reast 1.89us(min) @ Mclk=16.9344MHz (32clk)
-	chip->wait_timerif->Set(240); //about 3us
-	
-	chip->wait_timerif->Wait();
+    chip->next_tick = GetTick() + 16; // about 2.0us
+    TickWait(chip->next_tick);
 	
 	// write data --------------
 	cbus_write8(slot, chip->dreg_addr[ex], data);
 	// set a after wait timer
 	// at reast 1.89us(min) @ Mclk=16.9344MHz (32clk)
-	chip->wait_timerif->Set(240); //about 3us
+    chip->next_tick = GetTick() + 16; // about 2.0us
 }
 
 void opl3_init(CHIP_INFO *chip)

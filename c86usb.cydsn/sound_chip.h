@@ -1,7 +1,6 @@
 #ifndef SOUND_CHIP_H__
 #define SOUND_CHIP_H__
 #include <stdint.h>
-#include "timer_if.h"
 
 // ------------------------------------------------------------------
 // OPNA ADPCM registers
@@ -105,7 +104,7 @@ typedef struct tag_CHIP_INFO{
 	uint16_t dreg_addr[2];
 	const uint8_t *waitidx;
 	const uint16_t *waitdef;
-	const TIMER_INTERFACE *wait_timerif;
+    uint64_t next_tick;
 	void (*writefunc)(struct tag_CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data);
 } CHIP_INFO;
 

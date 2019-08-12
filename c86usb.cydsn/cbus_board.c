@@ -1,5 +1,4 @@
 #include <project.h>
-#include "timer_if.h"
 #include "cbus.h"
 #include "cbus_board.h"
 #include "sound_chip.h"
@@ -162,7 +161,7 @@ void cbus_board_init(uint8_t slot)
 		break;
 		
 	case CBUS_BOARD_118:
-   		opl3_init(&board->chip[1]);
+   		//opl3_init(&board->chip[1]);
 		break;
 
 	case CBUS_BOARD_SID98:
@@ -293,7 +292,6 @@ static uint32_t auto_detect(int idx)
 // 初期化
 void cbus_board_setup(void)
 {
-	int timeridx = 0;
 	uint8_t d=0;
 
 	has_lowbit_decoder_board = 0;
@@ -310,11 +308,12 @@ void cbus_board_setup(void)
 		uint32_t preferred_type = conf_get_board_type(i);
 		uint32_t type = preferred_type;
 
-        // DEBUG!!!!!!!!!!!!!!
+        // for DEBUG!!!!!!!!!!!!!!
 //        if(i==0){
 //            preferred_type = CBUS_BOARD_SB16;
 //            type = preferred_type;
 //        }
+
 		
 		// 自動判定
 		if (preferred_type == CBUS_BOARD_AUTO){
@@ -341,7 +340,7 @@ void cbus_board_setup(void)
 				break;
 			}
 		}
-		
+
 		board->boardtype = type;
 
 		switch(type){
@@ -382,7 +381,6 @@ void cbus_board_setup(void)
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2203_MC4[0];
 			board->chip[0].writefunc = ym2203_write;
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
 			board->control_write = 0;
 			
 			// FIXME: 初期化
@@ -410,10 +408,6 @@ void cbus_board_setup(void)
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2203_MC4[0];
 			board->chip[0].writefunc = ym2203_write;
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
-			
-			if(timeridx>=NTIMERS)
-				break;
 			
 			board->nchips = 2;
 			board->chip[1].slot = i;
@@ -429,7 +423,6 @@ void cbus_board_setup(void)
 			board->chip[1].waitidx = &waitidx_2608[0];
 			board->chip[1].waitdef = &waitdef_2203_MC4[0];
 			board->chip[1].writefunc = ym2203_write;
-			board->chip[1].wait_timerif = &timerRes[timeridx++];
 			break;
 			
 		// ---------------------------------
@@ -458,10 +451,6 @@ void cbus_board_setup(void)
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2203_MC4[0];
 			board->chip[0].writefunc = ym2203_write;
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
-			
-			if(timeridx>=NTIMERS)
-				break;
 			
 			board->nchips = 2;
 			board->chip[1].slot = i;
@@ -477,7 +466,6 @@ void cbus_board_setup(void)
 			board->chip[1].waitidx = &waitidx_2608[0];
 			board->chip[1].waitdef = &waitdef_2203_MC4[0];
 			board->chip[1].writefunc = ym2203_write;
-			board->chip[1].wait_timerif = &timerRes[timeridx++];
 			break;
 			
 		// ---------------------------------
@@ -501,7 +489,6 @@ void cbus_board_setup(void)
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2608[0];
 			board->chip[0].writefunc = ym2608_write;
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
 			board->control_write = 0;
 
 			// OPNAマスク解除
@@ -557,7 +544,6 @@ void cbus_board_setup(void)
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2608[0];
 			board->chip[0].writefunc = ym2608_write;
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
 			board->control_write = board86_control;
 
 			// OPNA初期化
@@ -584,7 +570,6 @@ void cbus_board_setup(void)
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2608[0];
 			board->chip[0].writefunc = ym2608_write;
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
 			board->control_write = board86_control;
 
 			// OPNA初期化
@@ -603,14 +588,10 @@ void cbus_board_setup(void)
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2608[0];
 			board->chip[0].writefunc = ym2608_write;
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
 
 			// OPNA初期化
 			ym2608_init(&board->chip[0]);
 
-			if(timeridx>=NTIMERS)
-				break;
-			
 			board->nchips = 2;
 			board->chip[1].slot = i;
 			board->chip[1].chiptype = CHIP_YM3438;
@@ -622,8 +603,6 @@ void cbus_board_setup(void)
 			board->chip[1].waitidx = &waitidx_2608[0];
 			board->chip[1].waitdef = &waitdef_2203_MC4[0];
 			board->chip[1].writefunc = ym2203_write;
-			board->chip[1].wait_timerif = &timerRes[timeridx++];
-			
 			break;
 			
 
@@ -652,7 +631,6 @@ void cbus_board_setup(void)
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2608[0];
 			board->chip[0].writefunc = ym2608_write;
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
 
 			// OPNAマスク解除
 			// bit 1: YM2608(OPNA)マスク設定   : 0=non-mask / 1=OPNA masked
@@ -691,7 +669,6 @@ void cbus_board_setup(void)
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2608[0];
 			board->chip[0].writefunc = ym2608_write;
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
 
 			// OPNAマスク解除
 			// bit 1: YM2608(OPNA)マスク設定   : 0=non-mask / 1=OPNA masked
@@ -719,7 +696,6 @@ void cbus_board_setup(void)
 			board->chip[0].waitidx = &waitidx_2608[0];
 			board->chip[0].waitdef = &waitdef_2608[0];
 			board->chip[0].writefunc = ym2608_write;
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
 
 			// FIXME:OPNAとして初期化
 			ym2608_init(&board->chip[0]);
@@ -744,6 +720,7 @@ void cbus_board_setup(void)
 					type = CBUS_BOARD_118;
 			}
 #endif
+#if 0
 			board->nchips = 2;
 			board->chip[0].slot = i;
 			// OPNA-mode --------------
@@ -757,7 +734,6 @@ void cbus_board_setup(void)
 			board->chip[0].waitdef = &waitdef_2608[0];
 			board->chip[0].writefunc = ym2608_write;
 			// FIXME:
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
 			board->control_write = 0;
 
 			// OPL3-mode -------------
@@ -772,10 +748,27 @@ void cbus_board_setup(void)
 			board->chip[1].waitdef = 0;
 			board->chip[1].writefunc = ymf297_opl3_write;
 			// FIXME:
-			board->chip[1].wait_timerif = &timerRes[timeridx++];
 			board->control_write = 0;
-            
        		opl3_init(&board->chip[1]);
+#else
+			board->nchips = 1;
+			board->chip[0].slot = i;
+			// OPL3-mode -------------
+			board->chip[0].slot = i;
+			board->chip[0].chiptype = CHIP_YMF297_OPL3;
+			board->chip[0].areg_addr[0] = 0x1488;
+			board->chip[0].dreg_addr[0] = 0x1489;
+			board->chip[0].areg_addr[1] = 0x148a;
+			board->chip[0].dreg_addr[1] = 0x148b;
+			// ウエイト値固定・テーブル無し（タイマは必要）
+			board->chip[0].waitidx = 0;
+			board->chip[0].waitdef = 0;
+			board->chip[0].writefunc = ymf297_opl3_write;
+			// FIXME:
+			board->control_write = 0;
+       		opl3_init(&board->chip[0]);
+#endif
+            
             //CyDelay(2000);
 			break;
 
@@ -801,7 +794,6 @@ void cbus_board_setup(void)
 			board->chip[1].waitidx = &waitidx_2608[0];
 			board->chip[1].waitdef = &waitdef_2608[0];
 			board->chip[1].writefunc = ym2608_write;
-			board->chip[1].wait_timerif = &timerRes[timeridx++];
 			break;
 
 		// YMF262 + YM2203 --------------------------------------
@@ -812,18 +804,20 @@ void cbus_board_setup(void)
 			board->nchips = 1;
 			board->chip[0].slot = i;
 			board->chip[0].chiptype = CHIP_YMF262;
+            // 要検証:
+            //[2016/09/19 21:39:26] RuRuRu: SB16は設定しだいですよねー。hootでは0x24d2~2cd2
 			board->chip[0].areg_addr[0] = 0xC8D2;
 			board->chip[0].dreg_addr[0] = 0xC9D2;
 			board->chip[0].areg_addr[1] = 0xCAD2;
 			board->chip[0].dreg_addr[1] = 0xCBD2;
+//			board->chip[0].areg_addr[0] = 0x24D2;
+//			board->chip[0].dreg_addr[0] = 0x25D2;
+//			board->chip[0].areg_addr[1] = 0x26D2;
+//			board->chip[0].dreg_addr[1] = 0x27D2;
 			// FIXME: ウエイト違う.
-			board->chip[0].waitidx = &waitidx_2608[0];
-			board->chip[0].waitdef = &waitdef_2203_MC4[0];
+			board->chip[0].waitidx = 0;//&waitidx_2608[0];
+			board->chip[0].waitdef = 0;//&waitdef_2203_MC4[0];
 			board->chip[0].writefunc = ymf262_write;
-			board->chip[0].wait_timerif = &timerRes[timeridx++];
-            
-			if(timeridx>=NTIMERS)
-				break;
 			
     		// have 2203? ---------------------
             if(type!=CBUS_BOARD_SB16VALUE){
@@ -845,7 +839,6 @@ void cbus_board_setup(void)
         			board->chip[1].waitidx = &waitidx_2608[0];
     	    		board->chip[1].waitdef = &waitdef_2203_MC4[0];
     		    	board->chip[1].writefunc = ym2203_write;
-        			board->chip[1].wait_timerif = &timerRes[timeridx++];
 
                     locked_base_addr[base==0x088?0:1] = 1;
         			has_lowbit_decoder_board = 1;
@@ -871,7 +864,6 @@ void cbus_board_setup(void)
 				// ウエイト不要
 				board->chip[k].waitidx = 0;
 				board->chip[k].waitdef = 0;
-				board->chip[k].wait_timerif = 0;
 			}
 			
 			break;
@@ -884,10 +876,6 @@ void cbus_board_setup(void)
 		}
 
 		cbus_board_init(i);
-
-		// ウェイトタイマーが不足したらそこで止める
-		if(timeridx>=NTIMERS)
-			break;
 	}
 }
 

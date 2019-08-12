@@ -81,8 +81,8 @@ uint8_t `$INSTANCE_NAME`_Read8(uint8_t isodd)
 	}
 #endif
 
-	return (`$INSTANCE_NAME`_DIN_LSB_DATA_REG);
     CyExitCriticalSection(intr);
+	return (`$INSTANCE_NAME`_DIN_LSB_DATA_REG);
 }
 
 // 注意： unalignedアクセスした場合の結果は不定。
@@ -99,8 +99,8 @@ uint16_t `$INSTANCE_NAME`_Read16()
 		/* wait until input data are valid */
 	}
 
-	return ((((uint16) `$INSTANCE_NAME`_DIN_MSB_DATA_REG) << 8u) | `$INSTANCE_NAME`_DIN_LSB_DATA_REG);
     CyExitCriticalSection(intr);
+	return ((((uint16) `$INSTANCE_NAME`_DIN_MSB_DATA_REG) << 8u) | `$INSTANCE_NAME`_DIN_LSB_DATA_REG);
 }
 
 void `$INSTANCE_NAME`_BusyWait()

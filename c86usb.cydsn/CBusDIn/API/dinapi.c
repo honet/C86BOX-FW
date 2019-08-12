@@ -25,14 +25,13 @@ void `$INSTANCE_NAME`_Stop(void)
 
 uint8_t `$INSTANCE_NAME`_Read8()
 {
-    uint8_t intr = CyEnterCriticalSection();
+    //uint8_t intr = CyEnterCriticalSection();
 	// バスアクセス待ち
-	while ((`$INSTANCE_NAME`_STATUS_REG & `$INSTANCE_NAME`_STATUSBIT_BUS_BUSY) != 0u) {
-	}
+	while ((`$INSTANCE_NAME`_STATUS_REG & `$INSTANCE_NAME`_STATUSBIT_BUS_BUSY) != 0u) {}
     
 	// リード指示送る
 	`$INSTANCE_NAME`_CMD_FIFO_REG = `$INSTANCE_NAME`_COMMAND_BYTE;
-#if 1
+#if 0
     uint8_t s = `$INSTANCE_NAME`_STATUS_REG;
     uint32_t count = 0;
 	while (( s & `$INSTANCE_NAME`_STATUSBIT_DATA_READY) == 0) {
@@ -49,14 +48,14 @@ uint8_t `$INSTANCE_NAME`_Read8()
 	}
 #endif
 
+    //CyExitCriticalSection(intr);
     return CY_GET_REG16(`$INSTANCE_NAME`_DATA_FIFO_PTR);
-    CyExitCriticalSection(intr);
 }
 
 // 注意： unalignedアクセスした場合の結果は不定。
 uint16_t `$INSTANCE_NAME`_Read16()
 {
-    uint8_t intr = CyEnterCriticalSection();
+    //uint8_t intr = CyEnterCriticalSection();
 	// バスアクセス待ち
 	while ((`$INSTANCE_NAME`_STATUS_REG & `$INSTANCE_NAME`_STATUSBIT_BUS_BUSY) != 0u) {
 	}
@@ -67,8 +66,8 @@ uint16_t `$INSTANCE_NAME`_Read16()
 		/* wait until input data are valid */
 	}
 
+    //CyExitCriticalSection(intr);
     return CY_GET_REG16(`$INSTANCE_NAME`_DATA_FIFO_PTR);
-    CyExitCriticalSection(intr);
 }
 
 void `$INSTANCE_NAME`_BusyWait()

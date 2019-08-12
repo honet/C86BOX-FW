@@ -35,7 +35,7 @@ module CBusDOut (
 // アクセスウエイト(8MHzで2wait必要)
 // 5~6あたりで化ける
 parameter [7:0] HiPulseCount = 8'd4;
-parameter [7:0] LoPulseCount = 8'd10;
+parameter [7:0] LoPulseCount = 8'd8;
 
 localparam [7:0] LoPulseCountPeriod = LoPulseCount-1;
 localparam [7:0] HiPulseCountPeriod = HiPulseCount-1;
