@@ -1,4 +1,5 @@
 # C86BOX Firmware
+<img src="http://c86box.com/images/c86box_wpc2.jpg" width=800>
 <img src="https://github.com/honet/C86BOX-FW/raw/master/doc/topdesign.jpg" width=800>
 Firmware for C86BOX (NEC PC-98Series C-BUS to USB Bridge BOX).   
 
