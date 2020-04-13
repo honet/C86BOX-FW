@@ -204,12 +204,12 @@ void BulkTransfer(void)
 				USBFS_ReadOutEP(USB_OUT_EP, (uint8_t*)&msgbuf[widx], count);
 			}else{
 				// 分断
-				USBFS_ReadOutEP(USB_OUT_EP, (uint8_t*)&msgbuf[widx], (MSGBUF_SIZE-widx));
-				USBFS_ReadOutEP(USB_OUT_EP, (uint8_t*)&msgbuf[0], widx+intcount-MSGBUF_SIZE);
+				USBFS_ReadOutEP(USB_OUT_EP, (uint8_t*)&msgbuf[widx], 4*(MSGBUF_SIZE-widx));
+				USBFS_ReadOutEP(USB_OUT_EP, (uint8_t*)&msgbuf[0], 4*(widx+intcount-MSGBUF_SIZE));
 			}
 			msg_widx += intcount;
-            msg_length+=intcount;
-			USBFS_EnableOutEP(USB_OUT_EP);
+            msg_length += intcount;
+			//USBFS_EnableOutEP(USB_OUT_EP); ReadOutEP内で実行されてる
 		}
 	}
 }
