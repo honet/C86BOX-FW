@@ -906,6 +906,6 @@ void board86_control(CBUS_BOARD_INFO *board, uint8_t idx, uint8_t data)
 	if (4<idx) return;
 	if (15<data) data = 15;
 	
-	cbus_write8(board->slot, 0xa466, vol_idx[idx]<<4 | data);
+	cbus_write8(board->slot, 0xa466, vol_idx[idx]<<5 | data);
 }
 
