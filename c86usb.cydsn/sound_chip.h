@@ -93,6 +93,7 @@ typedef enum {
 	CHIP_YM3438			= 0x00021,
 	
 	CHIP_MOS6581		= 0x00022,
+    CHIP_TMS3631RI104   = 0x00023,
 } CHIP_TYPE;
 
 struct tag_CHIP_INFO;

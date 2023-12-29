@@ -13,3 +13,4 @@ Backup/
 *.cywrk.*
 *.cyprj.*
 *~
+*.log

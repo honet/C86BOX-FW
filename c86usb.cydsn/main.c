@@ -12,6 +12,7 @@
 #include <project.h>
 #include "cbus.h"
 #include "cbus_board.h"
+#include "cbus_board14.h"
 #include "sound_chip.h"
 #include "eeprom_config.h"
 #include "usb_vendor_request.h"
@@ -19,7 +20,7 @@
 #include "tick.h"
 
 // MESSAGE DEFINITION ------------------------------------------------------
-// 00 [7:4]slot,[3:1]chip,[0:0]ex addr data
+// 00 ee aa dd  chip write: ee=([7:4]slot,[3:1]chip,[0:0]ex) aa=addr dd=data
 // 10 cc dd dd  slot.A write control : cc=control no, dd=data
 // 11 cc dd dd  slot.B write control : cc=control no, dd=data
 // 12 cc dd dd  slot.C write control(reserved) : cc=control no, dd=data
@@ -34,7 +35,7 @@
 #define MSGBUF_SIZE      1024//(1024*8) // must be equal to 2^n
 #define MSGBUF_SIZEMASK  (MSGBUF_SIZE-1)
 
-volatile uint8_t ep2inbuf[32];
+volatile uint8_t __attribute__((aligned(4))) ep2inbuf[32];
 
 volatile uint32_t msgbuf[MSGBUF_SIZE];
 volatile uint32_t msg_widx;
@@ -192,8 +193,7 @@ void ProcessData()
 
 void BulkTransfer(void)
 {
-	if (USBFS_GetEPState(USB_OUT_EP) == USBFS_OUT_BUFFER_FULL)
-	{
+	if (USBFS_GetEPState(USB_OUT_EP) == USBFS_OUT_BUFFER_FULL) {
 		uint8_t count = USBFS_wGetEPCount(USB_OUT_EP);
         uint8_t intcount = count>>2;
 		uint32_t widx = IDX(msg_widx);
@@ -202,7 +202,7 @@ void BulkTransfer(void)
 			if (intcount <= (MSGBUF_SIZE - widx)){
 				// 分断せず
 				USBFS_ReadOutEP(USB_OUT_EP, (uint8_t*)&msgbuf[widx], count);
-			}else{
+			} else {
 				// 分断
 				USBFS_ReadOutEP(USB_OUT_EP, (uint8_t*)&msgbuf[widx], 4*(MSGBUF_SIZE-widx));
 				USBFS_ReadOutEP(USB_OUT_EP, (uint8_t*)&msgbuf[0], 4*(widx+intcount-MSGBUF_SIZE));
@@ -224,7 +224,7 @@ static void _ReadDieID(uint8 descr[])
 	int len = strlen(prefix);
 
 	/* Check descriptor validation */
-	if( descr != NULL) {
+	if(descr != NULL) {
 		j=2u;
 
 		for (i=0u; i<len; i++){
@@ -233,7 +233,7 @@ static void _ReadDieID(uint8 descr[])
 		}
 
 		/* fill descriptor : WAFER-ID 16文字*/
-		for(i = 0u; i<8; i++) {
+		for (i = 0u; i<8; i++) {
 			value = CY_GET_XTND_REG8((void CYFAR *)(CYDEV_FLSHID_CUST_TABLES_BASE+i));
 			descr[j++] = (uint8)hex[value >> 4u];
 			descr[j++] = 0u;
@@ -290,7 +290,7 @@ int main()
 			BulkTransfer();
 			ProcessData();
 
-			if( USBFS_transferState == USBFS_TRANS_STATE_IDLE ){
+			if (USBFS_transferState == USBFS_TRANS_STATE_IDLE){
 				if (usbReq_reset){
 					cbus_reset();
 					for(int i=0; i<NMAXBOARDS; i++){

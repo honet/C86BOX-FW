@@ -1,9 +1,10 @@
 #include <project.h>
 #include "cbus.h"
 #include "cbus_board.h"
-#include "sound_chip.h"
+#include "cbus_board14.h"
 #include "eeprom_config.h"
 #include "cbus_init118.h"
+#include "tick.h"
 
 struct tag_CBUS_BOARD_INFO;
 
@@ -99,6 +100,11 @@ void cbus_board_init(uint8_t slot)
 	CBUS_BOARD_INFO *board = &boards[slot];
 
 	switch(board->boardtype){
+	// ---------------------------------
+	case CBUS_BOARD_14:
+        board14_init(&board->chip[0]);
+        break;
+        
 	// ---------------------------------
 	// YM2203 only
 	case CBUS_BOARD_26:
@@ -250,7 +256,7 @@ static uint32_t auto_detect(int idx)
 		// NOTE: SpeakBoardはアドレスを12bitしかデコードしていないようだ。
 
 		// YMF288 mode select
-		chip_write(idx, base+0, base+2, 0x20, 0x2 );  // bit0:STANDBY, bit1:YMF288 mode
+		chip_write(idx, base+0, base+2, 0x20, 0x2);  // bit0:STANDBY, bit1:YMF288 mode
 
 		// 0xff OPNA device-id
 		uint16_t chiptype = chip_read(idx, base+0, base+2, 0xff);
@@ -845,6 +851,25 @@ void cbus_board_setup(void)
                 }
             }
        		opl3_init(&board->chip[0]);
+            break;
+
+        // 14board(TMS3631-RI104) -----------------------------------
+        case CBUS_BOARD_14:
+            board->nchips = 1;
+            board->boardtype = CBUS_BOARD_14;
+			board->control_write = 0;
+			board->control_read = 0;
+            board->chip[0].chiptype = CHIP_TMS3631RI104;
+			board->chip[0].areg_addr[0] = 0;
+			board->chip[0].dreg_addr[0] = 0;
+			board->chip[0].areg_addr[1] = 0;
+			board->chip[0].dreg_addr[1] = 0;
+			board->chip[0].waitidx = 0;
+			board->chip[0].waitdef = 0;
+			board->chip[0].writefunc = board14_write;
+			board->control_write = 0;
+            
+            board14_init(&board->chip[0]);
             break;
             
 		// SID98 ----------------------------------------------------

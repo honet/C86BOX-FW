@@ -91,7 +91,7 @@ BOARD_INFO board_info;
 
 uint32_t config_board_type = 0;
 
-uint32_t fwversion = 0x5;
+uint32_t fwversion = 0x00000006;
 
 volatile uint8_t usbReq_reset = 0;
 volatile uint8_t usbReq_setBoardType = 0;
