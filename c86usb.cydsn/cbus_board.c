@@ -1,21 +1,15 @@
+#include <stdint.h>
 #include <project.h>
 #include "cbus.h"
 #include "cbus_board.h"
 #include "cbus_board14.h"
 #include "eeprom_config.h"
 #include "cbus_init118.h"
+#include "cbus_mpu.h"
 #include "tick.h"
 
 struct tag_CBUS_BOARD_INFO;
 
-typedef struct tag_CBUS_BOARD_INFO{
-	uint8_t slot;
-	CBUS_BOARD_TYPE boardtype;
-	uint8_t nchips;
-	CHIP_INFO chip[NMAXCHIPS];
-	void (*control_write)(struct tag_CBUS_BOARD_INFO *board, uint8_t idx, uint8_t data);
-	uint16_t (*control_read)(struct tag_CBUS_BOARD_INFO *board, uint8_t idx);
-} CBUS_BOARD_INFO;
 
 typedef enum {
 	SOUND_98DOPLUS = 0x00, // RESERVE
@@ -893,6 +887,16 @@ void cbus_board_setup(void)
 			
 			break;
 
+        case CBUS_BOARD_MPU98:
+        case CBUS_BOARD_MPU98II:
+			board->nchips = 1;
+			//board->boardtype = type;
+			board->mpu_data_port = 0xe0d0;
+			board->mpu_stat_port = 0xe0d2;
+
+			mpu_set_uart_mode(board);
+			break;
+            
 		case CBUS_BOARD_UNKNOWN:
 		default:
 			board->boardtype = CBUS_BOARD_UNKNOWN;
@@ -934,3 +938,38 @@ void board86_control(CBUS_BOARD_INFO *board, uint8_t idx, uint8_t data)
 	cbus_write8(board->slot, 0xa466, vol_idx[idx]<<5 | data);
 }
 
+uint8_t cbus_has_midi(uint8_t slot)
+{
+	if (slot>=NMAXBOARDS)
+		return 0;
+	
+	CBUS_BOARD_INFO *board = &boards[slot];
+	return board->mpu_data_port != 0;
+}
+
+void cbus_midi_write(uint8_t slot, uint8_t msg)
+{
+	if (slot>=NMAXBOARDS)
+		return;
+
+    CBUS_BOARD_INFO *board = &boards[slot];	
+    if (board->mpu_data_port == 0)
+        return;
+	mpu_write_data(board, msg);
+}
+
+
+uint8_t cbus_midi_read(uint8_t slot, uint8_t *msg)
+{
+	if (slot>=NMAXBOARDS)
+		return 0;
+	
+	CBUS_BOARD_INFO *board = &boards[slot];
+    if (board->mpu_data_port == 0)
+        return 0;
+	if (!mpu_dsr(board))
+		return 0;
+	
+	*msg = mpu_read_data(board);
+	return 1;
+}

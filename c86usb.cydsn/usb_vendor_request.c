@@ -101,22 +101,23 @@ volatile uint32_t usbReq_boardType[NMAXBOARDS] = {0};
 // Microsoft Specific---------------------------------------------------------
 const uint8_t USB_MSOSFeatureDescriptor[] = {
 	// HEADER Section  ------
-	DWBVAL(0x28),			/* dwLength   : length of this descriptor */
-	WBVAL(0x0100),			/* bcdVersion : version */
-	WBVAL(0x0004),			/* wIndex     : Extended compat ID descriptor */
-	0x01,					/* bCount     : Number of function sections */
-	0,0,0,0,0,0,0,			/* RESERVED */
+	DWBVAL(40),     		/* dwLength   [4] : length of this descriptor */
+	WBVAL(0x0100),			/* bcdVersion [2] : version */
+	WBVAL(0x0004),			/* wIndex     [2] : Extended compat ID descriptor */
+	0x01,					/* bCount     [1] : Number of function sections */
+	0,0,0,0,0,0,0,			/* RESERVED   [7] */
 	
 	// FUNCTION Section  ------
-	0x00,						/* bFirstInterfaceNumber : Interface number */
-	0x01,						/* RESERVED */
-	0x57, 0x49, 0x4e, 0x55,		/* compatibleID : "WINUSB" */
+	0x00,						/* bFirstInterfaceNumber[1] : Interface number */
+	0x01,						/* RESERVED             [1] */
+	0x57, 0x49, 0x4e, 0x55,		/* compatibleID         [8] : "WINUSB" */
 	0x53, 0x42, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00,		/* subCompatibleID : Secondary ID */
+	0x00, 0x00, 0x00, 0x00,		/* subCompatibleID      [8] : Secondary ID */
 	0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00,		/* RESERVED */
+	0x00, 0x00, 0x00, 0x00,		/* RESERVED             [6] */
 	0x00, 0x00
 };
+
 
 const uint8_t USB_MSOSExtPropDescriptor[] = {
 	// HEADER Section ---------------------------
