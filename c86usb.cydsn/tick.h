@@ -10,6 +10,9 @@
  * ========================================
 */
 #include <stdint.h>
+
+#define WAIT1MS (8000) // 8000000==1sec (1tick = 8MHz = 125ns)
+
 uint64_t GetTick();
 void TickWait(uint64_t till);
 void TickWaitDelta(uint32_t delta);

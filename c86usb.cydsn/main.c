@@ -498,9 +498,11 @@ int main()
 
 	// setup
 	TickSetup();
-	cbus_reset();
+
+    cbus_reset();
 	cbus_board_setup();
-//    while(1) sidbench();
+
+    //while(1) sidbench();    
 
 	for (int i=0; i<NMAXBOARDS; i++){
 		if (cbus_has_midi(i)) hasMidi = 1;

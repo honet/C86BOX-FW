@@ -310,7 +310,7 @@ void cbus_board_setup(void)
 
         // for DEBUG!!!!!!!!!!!!!!
 //        if(i==0){
-//            preferred_type = CBUS_BOARD_SB16;
+//            preferred_type = CBUS_BOARD_MPU98II;
 //            type = preferred_type;
 //        }
 
@@ -764,12 +764,17 @@ void cbus_board_setup(void)
 			board->chip[0].waitidx = 0;
 			board->chip[0].waitdef = 0;
 			board->chip[0].writefunc = ymf297_opl3_write;
+
+            board->mpu_data_port = 0x148c;
+			board->mpu_stat_port = 0x148d;
 			// FIXME:
 			board->control_write = 0;
-       		opl3_init(&board->chip[0]);
+			opl3_init(&board->chip[0]);
+
+            mpu_set_uart_mode(board);
 #endif
             
-            //CyDelay(2000);
+			//CyDelay(2000);
 			break;
 
 		// YMF262 --------------------------------------
@@ -819,41 +824,41 @@ void cbus_board_setup(void)
 			board->chip[0].waitdef = 0;//&waitdef_2203_MC4[0];
 			board->chip[0].writefunc = ymf262_write;
 			
-    		// have 2203? ---------------------
-            if(type!=CBUS_BOARD_SB16VALUE){
-                uint16_t base = 0;
-    			if (type==CBUS_BOARD_SB16_2203_0088H) base = 0x88;
-    			else if (type==CBUS_BOARD_SB16_2203_0188H) base = 0x188;
-    	    	else if (check_have26func(i, 0x088)) base = 0x88;
-    	    	else if (check_have26func(i, 0x188)) base = 0x188;
-                
-    	    	if (base){
-        			board->nchips = 2;
-        			board->chip[1].slot = i;
-        			board->chip[1].chiptype = CHIP_YM2203;
-       				board->chip[1].areg_addr[0] = base;
-       				board->chip[1].dreg_addr[0] = base + 4;
-       				board->chip[1].areg_addr[1] = base + 2;
-       				board->chip[1].dreg_addr[1] = base + 6;
-        			// FIXME: ウエイト違う.
-        			board->chip[1].waitidx = &waitidx_2608[0];
-    	    		board->chip[1].waitdef = &waitdef_2203_MC4[0];
-    		    	board->chip[1].writefunc = ym2203_write;
+			// have 2203? ---------------------
+			if(type!=CBUS_BOARD_SB16VALUE){
+				uint16_t base = 0;
+				if (type==CBUS_BOARD_SB16_2203_0088H) base = 0x88;
+				else if (type==CBUS_BOARD_SB16_2203_0188H) base = 0x188;
+				else if (check_have26func(i, 0x088)) base = 0x88;
+				else if (check_have26func(i, 0x188)) base = 0x188;
+				
+				if (base){
+					board->nchips = 2;
+					board->chip[1].slot = i;
+					board->chip[1].chiptype = CHIP_YM2203;
+					board->chip[1].areg_addr[0] = base;
+					board->chip[1].dreg_addr[0] = base + 4;
+					board->chip[1].areg_addr[1] = base + 2;
+					board->chip[1].dreg_addr[1] = base + 6;
+					// FIXME: ウエイト違う.
+					board->chip[1].waitidx = &waitidx_2608[0];
+					board->chip[1].waitdef = &waitdef_2203_MC4[0];
+					board->chip[1].writefunc = ym2203_write;
+					
+					locked_base_addr[base==0x088?0:1] = 1;
+					has_lowbit_decoder_board = 1;
+				}
+			}
+			opl3_init(&board->chip[0]);
+			break;
 
-                    locked_base_addr[base==0x088?0:1] = 1;
-        			has_lowbit_decoder_board = 1;
-                }
-            }
-       		opl3_init(&board->chip[0]);
-            break;
-
-        // 14board(TMS3631-RI104) -----------------------------------
-        case CBUS_BOARD_14:
-            board->nchips = 1;
-            board->boardtype = CBUS_BOARD_14;
+		// 14board(TMS3631-RI104) -----------------------------------
+		case CBUS_BOARD_14:
+			board->nchips = 1;
+			board->boardtype = CBUS_BOARD_14;
 			board->control_write = 0;
 			board->control_read = 0;
-            board->chip[0].chiptype = CHIP_TMS3631RI104;
+			board->chip[0].chiptype = CHIP_TMS3631RI104;
 			board->chip[0].areg_addr[0] = 0;
 			board->chip[0].dreg_addr[0] = 0;
 			board->chip[0].areg_addr[1] = 0;
@@ -862,9 +867,9 @@ void cbus_board_setup(void)
 			board->chip[0].waitdef = 0;
 			board->chip[0].writefunc = board14_write;
 			board->control_write = 0;
-            
-            board14_init(&board->chip[0]);
-            break;
+			
+			board14_init(&board->chip[0]);
+			break;
             
 		// SID98 ----------------------------------------------------
 		// 俺ボード

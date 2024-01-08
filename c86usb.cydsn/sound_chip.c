@@ -460,6 +460,7 @@ void ymf297_opl3_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t da
     //for(uint8_t i; i<36; i++)
     //    cbus_read8(slot, chip->areg_addr[0]);
 }
+
 void ymf262_write(CHIP_INFO *chip, uint8_t exaddr, uint8_t addr, uint8_t data)
 {
 	uint8_t ex = exaddr&0x01;
@@ -492,6 +493,9 @@ void opl3_init(CHIP_INFO *chip)
 
 	//ymf297_opl3_write(chip, 0, 0x01, 0x20);//ENABLE_WAVE_SELECT
 
+
+#if 0
+    // for DEBUG (note-on test)
     {
     	// --------------------------------------
     	// set tone parameter (forTEST)
@@ -509,6 +513,7 @@ void opl3_init(CHIP_INFO *chip)
     	chip->writefunc(chip, 1, 0xb0, 0x00 | (0x04<<2)| 0x02); // KEYOFF, BLOCK, F-NUMBER(L)
     	chip->writefunc(chip, 1, 0xb0, 0x30 | (0x04<<2)| 0x02); // KEYON, BLOCK, F-NUMBER(L)
     }
+#endif
 }
 
 

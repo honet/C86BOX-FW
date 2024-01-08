@@ -92,7 +92,7 @@ void mpu_set_uart_mode(CBUS_BOARD_INFO *board)
 
 	do {
 		if (mpu_wait_dsr(board))
-			return; // timeout
+			break; // timeout
 
 	} while (mpu_read_data(board) != 0xFE); // ACK待ち
 
